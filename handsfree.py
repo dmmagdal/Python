@@ -3,6 +3,7 @@
 
 import keyboard as kb
 import speech_recognition as sr
+import selenium
 import ctypes
 from time import sleep
 import os
