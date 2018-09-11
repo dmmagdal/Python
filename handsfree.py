@@ -6,6 +6,9 @@ import speech_recognition as sr
 import selenium
 import ctypes
 from time import sleep
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 import os
 
 
@@ -22,6 +25,10 @@ def main():
 		print("Sphinx could not understand audio")
 	except sr.RequestError as e:
 		print("Sphinx error; {0}".format(e))
+
+	#run a search
+	searchArgs = ""
+	
 
 	'''
 	try:
@@ -57,6 +64,29 @@ def changeWin():
 	kb.press("alt+tab")
 	sleep(0.1)
 	kb.release("alt+tab")
+
+
+def openBrowser(searchArgs, headStat=None):
+	chrome_options = None
+	# If the headless status is not "None", then open the browser out
+	# of headless
+	if headStat != None:
+		# Set the Chrome options for headless.
+		chrome_options = Options()
+		chrome_options.add_argument("--headless")
+		chrome_options.add_argument("--window-size=1920x1080")
+
+	# Create new selenium webdriver (Chrome).
+	chrDriver = webdriver.Chrome(chrome_options=chrome_options)
+	chrDriver.get("https://www.google.com/")
+
+	# Run a search in chrome.
+	searchElem = chrDriver.find_element_by_id("lst-1b")
+	searchElem.click()
+	searchElem.send_keys(searchArgs)
+	searchElem.send_keys(Keys.ENTER)
+	return chrDriver
+
 
 if __name__ == '__main__':
 	main()
