@@ -1,5 +1,7 @@
 # handsfree.py
-# Uses voice commands to navigate webpages and between open applications on a desktop
+# Uses voice commands to navigate webpages and between open
+# applications on a desktop.
+# python 3.6.5
 
 import keyboard as kb
 import speech_recognition as sr
@@ -16,29 +18,33 @@ def main():
 	#changeWin()
 	r = sr.Recognizer()
 	with sr.Microphone() as source:
+		r.adjust_for_ambient_noise(source)
 		print("say something")
 		audio = r.listen(source)
 
+	'''
 	try:
 		print("Sphinx thinks you said " + r.recognize_sphinx(audio))
 	except sr.UnknownValueError:
 		print("Sphinx could not understand audio")
 	except sr.RequestError as e:
 		print("Sphinx error; {0}".format(e))
-
-	#run a search
-	searchArgs = ""
-	
-
 	'''
+
+	#'''
+	# Requires Internet access but is more accurate than CMU Sphinx
+	# engine.
 	try:
 		print("Google speech recognition thinks you said " + r.recognize_google(audio))
 	except sr.UnknownValueError:
 		print("Google speech recognition could not understand audio")
 	except sr.RequestError as e:
 		print("Could not request results from Google speech recognition service; {0}".format(e))
-	'''
+	#'''
 
+	#run a search
+	searchArgs = ""
+	
 
 def changeWin():
 	# alt-tab

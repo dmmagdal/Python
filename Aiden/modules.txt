@@ -1,0 +1,8 @@
+keyboard
+SpeechRecognition
+selenium
+pyttsx
+pyttsx3
+pypiwin32
+pywin32
+geocoder

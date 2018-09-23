@@ -1,0 +1,6 @@
+Name: Max Magdaleno
+Gender: male
+Email: maxm9450@gmail.com
+Password: Max12sam
+
+OS: Windows
