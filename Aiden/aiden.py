@@ -99,6 +99,8 @@ def main():
 		except sr.RequestError as e:
 			print("Could not request results from Google speech recognition service; {0}".format(e))
 
+	time.sleep(1)
+
 	'''
 	try:
 		print("Sphinx thinks you said " + r.recognize_sphinx(audio))
