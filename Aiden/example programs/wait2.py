@@ -65,8 +65,5 @@ def main():
 	print("baz")
 
 
-
-
-
 if __name__ == '__main__':
 	main()

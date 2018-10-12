@@ -205,3 +205,7 @@ print("public_profile" in permissions)
 	parameter list for get_permissions()
 	=> user_id is a string containing a user's unique id
 '''
+
+
+# Posts a string to the wall
+graph.put_wall_post("Foo bar")
