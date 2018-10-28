@@ -11,7 +11,7 @@
 import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.firefox.options import Options
 
 def main():
 	# Create webdriver object (run in headless).
@@ -49,8 +49,10 @@ def main():
 	# Close the webdriver, the wifi is setup.
 	firefox_driver.close()
 
-	# Send out the ip address.
-	os.system("ifconfig > network.txt")
+	## Send out the ip address.
+	#os.system("ifconfig > network.txt")
+
+	print("Wifi configured.")
 
 
 if __name__ == '__main__':
