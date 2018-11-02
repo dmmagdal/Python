@@ -22,9 +22,11 @@ def main():
 
 	# Initialize Chrome selenium web driver.
 	chromeOpts = Options()
+	#opts.binary_location = chromium_path
 	# chromeOpts.add_argument('--headless')
 	chromeOpts.add_argument('--incognito')
 	chromeOpts.add_argument('--window-size=1920x1080')
+	#chrome_driver = webdriver.Chrome(options=chromeOpts, chrome_options=opts)
 	chrome_driver = webdriver.Chrome(options=chromeOpts)
 
 	# Check the connectivity on wifi
