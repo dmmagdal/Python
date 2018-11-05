@@ -57,6 +57,10 @@ def dance(bot):
 def sentry(bot):
 	pass
 
+# Method to have robot find its charging dock.
+def dock(bot):
+	pass
+
 
 if __name__ == '__main__':
 	main()
