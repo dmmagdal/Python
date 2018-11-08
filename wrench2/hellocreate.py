@@ -89,13 +89,17 @@ def main():
 	# protections.
 	bot.safe()
 
+	print("foo")
+
 	# Put bot into "full" mode. You are responsible for handling
 	# issues, no protection/safety in this mode.
 	bot.full()
 
 	# Directly set motor speeds (easier if using a joystick).
+	# Note: this has no way to "stop".
 	bot.drive_direct(100, 100)
-
+	time.sleep(2)
+	
 	# Turn angle [degrees] at speed. 45 deg, 100 mm/sec.
 	bot.turn_angle(45, 100)
 

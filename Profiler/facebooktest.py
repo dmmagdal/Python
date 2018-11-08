@@ -79,6 +79,8 @@ def main():
 		print(k)
 	post4 = graph.get_all_connections(id='me', connection_name='friends')
 	print(post4)
+	post5 = graph.get_all_connections(id='me', connection_name='groups')
+	print(post5)
 
 if __name__ == '__main__':
 	main()
