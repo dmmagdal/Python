@@ -3,6 +3,8 @@
 # A small program to run on the Create 2 robot. A sort of "hello world"
 # program. Copied from pycreate2 documentation here, at
 # https://pypi.org/project/pycreate2/ .
+# Some methods borrowed from
+# https://github.com/Tall67Paul/PythonRobot/blob/master/MyPythonRobotController.py
 # Python 3.6
 # Linux
 
@@ -11,6 +13,7 @@ import time
 import glob
 import sys
 import serial
+import struct
 
 connection = None
 
@@ -73,6 +76,52 @@ def getSerialPorts():
 	return results
 
 
+def sendCommandRaw(command):
+	global connection
+	print(connection)
+
+	try:
+		if connection is not None:
+			 connection.write(command)
+		else:
+			print("Not connected.")
+	except serial.SerialException:
+		print("Lost connection.")
+		connection = None
+
+
+def sendCommandASCII(command):
+	cmd = ""
+	for v in command.split():
+		cmd += chr(int(v))
+	sendCommandRaw(cmd)
+
+
+def getDecodedBytes(n, fmt):
+	global connection
+	print(connection)
+
+	try:
+		return struct.unpack(fmt, connection.read(n))[0]
+	except serial.SerialException:
+		print("Lost connection.")
+		connection = None
+		return None
+	except struct.error:
+		print("Unexpected data from serial port.")
+		return None
+
+
+def dock():
+	sendCommandASCII('142 18')
+	buttonbyte = getDecodedBytes(1, "B")
+	if buttonbyte != 4:
+		return False
+	else:
+		print("Docking...")
+		return True
+
+
 def main():
 	#onConnect()
 
@@ -89,8 +138,9 @@ def main():
 	# protections.
 	bot.safe()
 
-	print("foo")
+	dock()
 
+	'''
 	# Put bot into "full" mode. You are responsible for handling
 	# issues, no protection/safety in this mode.
 	bot.full()
@@ -124,6 +174,7 @@ def main():
 
 	# Stop the bot.
 	bot.drive_stop()
+	'''
 
 	# Query some sensors.
 	sensors = bot.get_sensors() # returns all data
