@@ -115,7 +115,7 @@ class Peer(object):
 				self.__debug("Not handled: %s: %s" 
 					% (msgtype, msgdata))
 			else:
-				self.
+				self
 		except KeyboardInterrupt:
 			raise
 		except:
