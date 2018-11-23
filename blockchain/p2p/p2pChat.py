@@ -43,9 +43,11 @@ def arp(opSys):
 	for line in lines:
 		print(line.strip("\n"))
 
+	##### -----Commented out for lack of need or use----- #####
 	# Network devices in machine and their respective information/
 	# statuses.
-	netDevs = ipfconfig(opSys)
+	#netDevs = ipfconfig(opSys)
+	# Match Interface with network devices in the machine. 
 
 	# Split contents of lines by interface. arpdict holds the
 	# interfaces and ip address info in a dictionary.
@@ -69,8 +71,7 @@ def arp(opSys):
 			ipaddresses = []
 	#print(arpdict)
 
-	# Match Interface with network devices in the machine. 
-
+	'''
 	# Search and print only dynamic ip addresses. Static ip addresses
 	# reserved for hardware by network administrator.
 	print("\n\n")
@@ -84,6 +85,10 @@ def arp(opSys):
 		tup[1] = dynamicIps
 		dynamicIps = []
 		tupList.append(tup)
+	'''
+
+	# Count number of dynamic adresses in an interface. The one with
+	# the most is selected by default.
 
 	# Close file.
 	datafile.close()
@@ -93,11 +98,13 @@ def arp(opSys):
 
 	# Create a list of active devices by returning the addresses of 
 	# static ips that were pinged successfully.
-	activeDevices = pingactivDevs(tupList, opSys)
+	#activeDevices = pingactivDevs(tupList, opSys)
 
 	return activeDevices
 
 
+##### -----Commented out for lack of need or use----- #####
+'''
 # Run ip/fconfig on console. Return devices and their info found.
 def ipfconfig(opSys):
 	# Run ip/fconfig command depending on OS.
@@ -169,6 +176,7 @@ def ipfconfig(opSys):
 
 	# Return data retrieved from file.
 	return devices
+'''
 
 
 def pingactivDevs(dynamicIps, opSys):
