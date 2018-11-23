@@ -28,7 +28,7 @@ def detectOS():
 
 # Run arp -a command on console. Return a list of available devices
 # found. (Only lists devices found on subnet associated with user's ip
-# address).
+# address).	
 def arp(opSys):
 	# Create a file that holds the results of the arp -a search and
 	# send the command to console (arp -a works on linux, Mac, & Win).
@@ -119,11 +119,17 @@ def arp(opSys):
 	# Delete file.
 	subprocess.Popen("rm arpdata.txt").wait()
 
+	##### -----Commented out for lack of need or use----- #####
+	"""
+	# NOTE: Devices that return packets in ping command may be without
+	# security, not necessarily Online/Offline devices.
 	# Create a list of active devices by returning the addresses of 
 	# static ips that were pinged successfully.
 	activeDevices = pingactivDevs(dynamicLs, opSys)
-	
 	return activeDevices
+	"""
+
+	return dynamicLs
 
 
 ##### -----Commented out for lack of need or use----- #####
@@ -278,7 +284,10 @@ def main():
 	arpDat = arp(opSys)
 
 	print("\n")
-	print(arpDat)
+	print("Default gateway: "+str(arpDat[0]))
+	print("Devices found on subnet:")
+	for dev in arpDat:
+		print(dev)
 
 
 if __name__ == '__main__':
