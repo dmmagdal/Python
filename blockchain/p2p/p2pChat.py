@@ -27,7 +27,8 @@ def detectOS():
 
 
 # Run arp -a command on console. Return a list of available devices
-# found.
+# found. (Only lists devices found on subnet associated with user's ip
+# address).
 def arp(opSys):
 	# Create a file that holds the results of the arp -a search and
 	# send the command to console (arp -a works on linux, Mac, & Win).
