@@ -8,10 +8,13 @@ import socket
 
 
 def main():
+	print("foo")
 	# Check to make sure there are correct number of arguments.
 	if len(sys.argv) != 2:
 		print("Usage: python commsTest.py <-s,c>")
 		exit(1)
+
+	print(sys.argv[1])
 
 	# If user typed in -s for server mode, launch server method.
 	if sys.argv[1] == "-s":
@@ -31,7 +34,7 @@ def beginServer():
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	server_addr = ('localhost', 10000)
 	print("Starting server on %s port %s" %server_addr)
-	socket.bind(server_addr)
+	s.bind(server_addr)
 
 	# Put server into listen mode with listen() and accept incoming
 	# connections with accept(). The accept() method returns an open
@@ -44,7 +47,7 @@ def beginServer():
 		connection, client_addr = s.accept()
 
 		try:
-			print("Connection from %s" client_addr)
+			print("Connection from %s" % client_addr)
 
 			# Data is read from the connection with recv() and
 			# transmitted with sendall().
