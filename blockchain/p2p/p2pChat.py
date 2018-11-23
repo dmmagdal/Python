@@ -61,7 +61,7 @@ def arp(opSys):
 		# Load interface and ip address data into respective lists and
 		# then load that information to the dictionary.
 		elif "Interface:" in lines[l]:
-			interface.append(lines[l])
+			interface.append(lines[l].strip("\n"))
 			l += 2
 			while l != len(lines) and len(lines[l]) != 1:
 				line = lines[l].strip("\n")
@@ -89,6 +89,28 @@ def arp(opSys):
 
 	# Count number of dynamic adresses in an interface. The one with
 	# the most is selected by default.
+	interfaceName = ""
+	maxNumOfDynamics = 0
+	for interf in arpdict:
+		#print(interf)
+		#print(arpdict[interf])
+		localNumofDynamics = 0
+		# Count all dynamic addresses per interface.
+		for addr in arpdict[interf]:
+			if addr[2] == "dynamic":
+				localNumofDynamics += 1
+		# If this interface has the highest number of dynamic ips so
+		# far, store it to variable.
+		if localNumofDynamics >= maxNumOfDynamics:
+			maxNumOfDynamics = localNumofDynamics
+			interfaceName = interf
+	#print("\n")
+	#print(interfaceName)
+	#print(maxNumOfDynamics)
+
+	dynamicLs = getDynamicIps(interfaceName, arpdict)
+	#for i in dynamicLs:
+	#	print(i)
 
 	# Close file.
 	datafile.close()
@@ -98,8 +120,8 @@ def arp(opSys):
 
 	# Create a list of active devices by returning the addresses of 
 	# static ips that were pinged successfully.
-	#activeDevices = pingactivDevs(tupList, opSys)
-
+	activeDevices = pingactivDevs(dynamicLs, opSys)
+	
 	return activeDevices
 
 
@@ -179,9 +201,71 @@ def ipfconfig(opSys):
 '''
 
 
-def pingactivDevs(dynamicIps, opSys):
+# Retrieves a list of dynamic ip addresses given and interface that
+# exists within the arp dictionary.
+def getDynamicIps(interfaceName, arpdict):
+	retList = []
+	for addr in arpdict[interfaceName]:
+		if addr[2] == "dynamic":
+			retList.append(addr)
+	return retList
 
-	pass
+
+# Pings all ip addresses in the dynamic ip list. Returns list of
+# addresses that pinged successfully.
+def pingactivDevs(dynamicList, opSys):
+	onlineDevs = []
+	# Usually for (wireless) interfaces, the first ip address in the
+	# list is the default gateway (router). Ignore that and ping all 
+	# others.
+	for i in range(1, len(dynamicList)):
+		# long strings cut down into variables.
+		str1 = "Destination host unreachable"
+		str2 = "Request timed out" 
+
+		# create conditionals to cut down size of if logic statements.
+		cond1 = opSys == "Windows"
+
+		# ping devices for Windows system.
+		#if opSys == "Windows":
+		if cond1:
+			info = subprocess.STARTUPINFO()
+			info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+			info.wShowWindow = subprocess.SW_HIDE
+			output = subprocess.Popen(['ping', str(dynamicList[i][0])],
+					stdout = subprocess.PIPE, 
+					startupinfo = info).communicate()[0]
+		# ping devices for linux bases systems.
+		else:
+			output = subprocess.Popen(['ping -c 4 ' +
+				 str(dynamicList[i][0])], 
+					stdout = subprocess.PIPE, 
+					shell = True).communicate()[0]
+
+		# logic conditionals (cont.).
+		cond2 = str1 not in output.decode('utf-8')
+		cond3 = str2 not in output.decode('utf-8')
+
+		# add devices for Windows system.
+		"""
+		if opSys == "Windows" and "Destination host unreachable" 
+				not in output.decode('utf-8') and "Request timed out" 
+				not in output.decode('utf-8'):
+		"""
+		if cond1 and cond2 and cond3:
+			onlineDevs.append(dynamicList[i])
+		# add devices for linux based systems.
+		'''
+		elif os.name == "posix" and "Destination Host Unreachable" 
+			not in output.decode('utf-8') and "errors" 
+			not in output.decode('utf-8'):
+		'''
+		if not cond1 and cond2 and cond3:
+			onlineDevs.append(dynamicList[i])
+
+	print("\nThere are", len(onlineDevs), "devices Online")
+	print(onlineDevs)
+	return onlineDevs
 
 
 def main():
@@ -191,6 +275,9 @@ def main():
 
 	# Retrieve ARP data.
 	arpDat = arp(opSys)
+
+	print("\n")
+	print(arpDat)
 
 
 if __name__ == '__main__':
