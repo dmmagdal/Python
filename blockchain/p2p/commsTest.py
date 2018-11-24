@@ -8,10 +8,9 @@ import socket
 
 
 def main():
-	print("foo")
 	# Check to make sure there are correct number of arguments.
 	if len(sys.argv) != 2:
-		print("Usage: python commsTest.py <-s,c>")
+		print("Usage: python commsTest.py <-s,-c>")
 		exit(1)
 
 	print(sys.argv[1])
@@ -24,7 +23,7 @@ def main():
 		beginClient()
 	# Else, send error message and close program.
 	else:
-		print("Usage: python commsTest.py <-s,c>")
+		print("Usage: python commsTest.py <-s,-c>")
 		exit(1)
 
 
@@ -32,7 +31,9 @@ def beginServer():
 	# Create socket and use bind() to associate with the server's
 	# address. localhost is server's current address, port is 10000.
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	server_addr = ('localhost', 10000)
+	#s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+	server_addr = ('10.0.0.132', 10000)
+	#server_addr = (s.gethostbyname(s.gethostname()), 10000)
 	print("Starting server on %s port %s" %server_addr)
 	s.bind(server_addr)
 
@@ -41,11 +42,14 @@ def beginServer():
 	# connection between the server and client, along iwth the address
 	# of the client. The connection is actually a different socket on
 	# another port assigned by the kernel. 
-	s.listen(1)
+	s.listen()
+
+	connection = None
+
 	while True:
 		print("Waiting for a connection.")
 		connection, client_addr = s.accept()
-
+	
 		try:
 			print("Connection from %s" % client_addr)
 
@@ -70,8 +74,11 @@ def beginClient():
 	# Socket for client is set up differently, instead attaching to
 	# the socket directly to the remote address with connect().
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	serv_addr = str(input("Enter the server's address: "))
-	port = str(input("Enter the port number: "))
+	#serv_addr = str(input("Enter the server's address: "))
+	#port = int(input("Enter the port number: "))
+	serv_addr = 'localhost'
+	serv_addr = '10.0.0.132'
+	port = 10000
 	server_addr = (serv_addr, port)
 	print("Connecting to %s port %s" % server_addr)
 
@@ -81,7 +88,7 @@ def beginClient():
 		# the server.
 		message = "This is a message. It will be repeated."
 		print("Sending %s" % message)
-		s.sendall(message)
+		s.sendall(message.encode())
 
 		# Look for response.
 		amount_recvd = 0
@@ -97,4 +104,4 @@ def beginClient():
 
 
 if __name__ == '__main__':
- 	main() 
+	main() 

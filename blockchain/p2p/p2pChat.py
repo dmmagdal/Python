@@ -286,8 +286,8 @@ def main():
 	print("\n")
 	print("Default gateway: "+str(arpDat[0]))
 	print("Devices found on subnet:")
-	for dev in arpDat:
-		print(dev)
+	for dev in range(1, len(arpDat)):
+		print(arpDat[dev])
 
 
 if __name__ == '__main__':
