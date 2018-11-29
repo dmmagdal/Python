@@ -231,7 +231,7 @@ def getInterftype(opSys, interfaceName):
 	return "Unknown network interface"
 
 
-# Refresh the listbox in the Log in page with all current ipaddresses
+# Refresh the listbox in the Log in page with all current ipaddresses.
 def refreshOnlineDevLb(onlineDevsLb, ipaddresses):
 	for i in range(1, len(ipaddresses)):
 		string = str()
@@ -274,6 +274,22 @@ def page1(arpDat, opSys, interftype):
 	onlineDevsLb = tk.Listbox(pg1, bg="black", fg="white")
 	onlineDevsLb.pack()
 	refreshOnlineDevLb(onlineDevsLb, ipaddresses)
+
+	modeLbl = tk.Label(pg1, text="Mode:", bg="black", fg="white")
+	modeLbl.pack()
+
+	joinIpLbl = tk.Label(pg1, text="Room IP: ", bg="black", fg="white")
+	joinIpLbl.pack()
+
+	joinIPEntry = tk.Entry(pg1, bg="black", fg="white")
+	joinIPEntry.pack()
+
+	clientBtn = tk.Button(pg1, text="Join Room", bg="black", 
+						  fg="white", command=None)
+	clientBtn.pack()
+	serverBtn = tk.Button(pg1, text="Create A Room", bg="black",
+						  fg="white", command=None)
+	serverBtn.pack()
 
 	pg1.mainloop()
 
