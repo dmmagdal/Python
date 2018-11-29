@@ -17,19 +17,56 @@ import tkinter as tk
 
 
 class Server(object):
-	"""docstring for Server"""
-	def __init__(self, arg):
-		super(Server, self).__init__()
-		self.arg = arg
+	ipList = []
+	chatLog = []
+	port = 33000
+	hostIP = ""
+
+	def __init__(self, port, hostIP):
+		self.port = port
+		self.hostIP = holds
+
+
+	def __init__(self, port, hostIP, ipList, chatLog):
+		self.port = port
+		self.hostIP = holds
+		self.ipList = ipList
+		self.chatLog = chatLog
+
+
+	def mainloop():
+		pass
+
+	def acceptConnections():
+		pass
+
+
+	def handleClient(client):
+		pass
+
+	def broadcast():
+		pass
 
 
 
 class Client(object):
-	"""docstring for Client"""
-	def __init__(self, arg):
-		super(Client, self).__init__()
-		self.arg = arg
+	port = 33000
+	hostIP = ""
+
+	def __init__(self, port, hostIP):
+		self.port = port
+		self.hostIP = holds
 		
+
+	def send():
+		pass
+
+	def recieve():
+		pass
+
+	def mainloop():
+		pass
+
 
 
 # Detect the user's operating system.
@@ -234,9 +271,8 @@ def getInterftype(opSys, interfaceName):
 # Refresh the listbox in the Log in page with all current ipaddresses.
 def refreshOnlineDevLb(onlineDevsLb, ipaddresses):
 	for i in range(1, len(ipaddresses)):
-		string = str()
-		string.join("\t", ipaddresses[i])
-		onlineDevsLb.insert(END, string)
+		string = "       ".join(ipaddresses[i])
+		onlineDevsLb.insert(tk.END, string)
 
 
 # Create "log in" page GUI with tkinter.
@@ -250,6 +286,12 @@ def page1(arpDat, opSys, interftype):
 	pg1.title("Setup")
 	pg1.geometry("500x450")
 	pg1.configure(background="black")
+
+	titleFont = ("Helvetica", 14)
+	welcomeLblStr = "Welcome to Peer Chat"
+	welcomeLbl = tk.Label(pg1, text=welcomeLblStr, bg="black", 
+						  fg="white", font=titleFont)
+	welcomeLbl.pack()
 
 	interftypeLblStr = "Interface type: " + str(interftype)
 	interftypeLbl = tk.Label(pg1, text=interftypeLblStr, bg="black",
@@ -272,7 +314,7 @@ def page1(arpDat, opSys, interftype):
 	onlineDevsLbl.pack()
 
 	onlineDevsLb = tk.Listbox(pg1, bg="black", fg="white")
-	onlineDevsLb.pack()
+	onlineDevsLb.pack(expand=True)
 	refreshOnlineDevLb(onlineDevsLb, ipaddresses)
 
 	modeLbl = tk.Label(pg1, text="Mode:", bg="black", fg="white")
