@@ -17,35 +17,58 @@ import tkinter as tk
 
 
 class Server(object):
-	ipList = []
+	ipList = {}
 	chatLog = []
 	port = 33000
 	hostIP = ""
+	buffersize = 1024
+	serversock = ""
 
+	# Constructor for the server. Also serves as main loop for server.
 	def __init__(self, port, hostIP):
 		self.port = port
-		self.hostIP = holds
+		self.hostIP = hostIP
+		self.serversock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.serversock.bind((hostIP, port))
+		accept_thread = Thread(target=acceptConnections)
+		accept_thread.start()
+		accept_thread.join()
 
 
+	# Secondary constructor for migrating hosts.
 	def __init__(self, port, hostIP, ipList, chatLog):
 		self.port = port
 		self.hostIP = holds
 		self.ipList = ipList
 		self.chatLog = chatLog
+		self.serversock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.serversock.bind((hostIP, port))
+		accept_thread = Thread(target=acceptConnections)
+		accept_thread.start()
+		accept_thread.join()
 
-
-	def mainloop():
-		pass
 
 	def acceptConnections():
-		pass
+		while True:
+			client, clientAddr = serversock.accept()
+			ipaddresses[client] = clientAddr
+			Thread(target=handle_client, args=(client,)).start()
 
 
 	def handleClient(client):
+		
 		pass
 
-	def broadcast():
-		pass
+
+	# Send messages to all users connected to server.
+	def broadcast(msg, prefix=""):
+		for sock in ipList:
+			sock.send(bytes(prefix, "utf8")+msg)
+
+
+	# Close the socket to the server.
+	def shutdown():
+		self.serversock.close()
 
 
 
@@ -275,6 +298,17 @@ def refreshOnlineDevLb(onlineDevsLb, ipaddresses):
 		onlineDevsLb.insert(tk.END, string)
 
 
+# Create a server object.
+def joinServer(serverIP):
+	client = Client(55000, serverIP)
+
+
+# Create a client object and connect it to a server.
+def launchServer(serverIP):
+	hostServer = Server(55000, serverIP)
+	joinServer(serverIP)
+
+
 # Create "log in" page GUI with tkinter.
 def page1(arpDat, opSys, interftype):
 	interfaceName = arpDat[0]
@@ -328,9 +362,13 @@ def page1(arpDat, opSys, interftype):
 
 	clientBtn = tk.Button(pg1, text="Join Room", bg="black", 
 						  fg="white", command=None)
+	#clientBtn = tk.Button(pg1, text="Join Room", bg="black", 
+	#					  fg="white", command=(lambda: joinServer(joinIPEntry.get())))
 	clientBtn.pack()
 	serverBtn = tk.Button(pg1, text="Create A Room", bg="black",
 						  fg="white", command=None)
+	#serverBtn = tk.Button(pg1, text="Create A Room", bg="black",
+	#					  fg="white", command=(lambda: launchServer(interfaceName)))
 	serverBtn.pack()
 
 	pg1.mainloop()
