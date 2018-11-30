@@ -109,10 +109,11 @@ class Client(object):
 	# Handles receiving messages from the server.
 	def recieve():
 		while True:
-			try:
-				msg = 
-			except OSError:
-				break
+			pass
+			#try:
+			#	#msg = 
+			#except OSError:
+			#	break
 		pass
 
 	# Close the socket to the server.
