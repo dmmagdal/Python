@@ -48,6 +48,7 @@ class Server(object):
 		accept_thread.join()
 
 
+	# Accept new connections from clients.
 	def acceptConnections():
 		while True:
 			client, clientAddr = serversock.accept()
@@ -55,9 +56,23 @@ class Server(object):
 			Thread(target=handle_client, args=(client,)).start()
 
 
+	# Handle client connections to the server.
 	def handleClient(client):
-		
-		pass
+		name = client.recv(buffersize).decode("utf8")
+		msg = "%s has joined the chat!" % name
+		broadcast(bytes(msg, "utf8"))
+		ipaddresses[client] = name
+
+		while True:
+			msg = client.recv(buffersize)
+			if msg != bytes("{quit}", "utf8"):
+				broadcast(msg, name+": ")
+			else:
+				client.send(bytes("{quit}", "utf8"))
+				client.close()
+				del ipaddresses[client]
+				broadcast(bytes("%s has left the chat." % name, "utf8"))
+				break
 
 
 	# Send messages to all users connected to server.
@@ -75,16 +90,33 @@ class Server(object):
 class Client(object):
 	port = 33000
 	hostIP = ""
+	clientsock = ""
 
+	# Constructor for the client.  Also serves as main loop for server.
 	def __init__(self, port, hostIP):
 		self.port = port
-		self.hostIP = holds
+		self.hostIP = hostIP
+		self.clientsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.clientsock.connect((hostIP, port))
+		recieve_thread = Thread(target=recieve)
+		recieve_thread.start()
 		
 
-	def send():
+	# Sends message to the server.
+	def send(event=None):
 		pass
 
+	# Handles receiving messages from the server.
 	def recieve():
+		while True:
+			try:
+				msg = 
+			except OSError:
+				break
+		pass
+
+	# Close the socket to the server.
+	def shutdown():
 		pass
 
 	def mainloop():
