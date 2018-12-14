@@ -25,6 +25,7 @@ class Obstacle:
 		# Set shape.
 		if shape == None:
 			self.shape = random.choice(self.__shapeList)
+			'''
 			if shape == "traingle":
 				corners = generateCorners(3, center)
 				self.cornerPoints = corners 
@@ -35,6 +36,7 @@ class Obstacle:
 				numSides = random.randint(4,25)
 				corners = generateCorners(numSides, center)
 				self.cornerPoints = corners
+			'''
 		else:
 			self.shape = shape
 		# Set center.
@@ -46,19 +48,23 @@ class Obstacle:
 			self.center = center
 		# Set cornerpoints.
 		if cornerPoints == None:
+			corners = []
 			if shape == "traingle":
-				corners = generateCorners(3, center)
+				corners = self.generateCorners(3, self.center)
 				self.cornerPoints = corners 
 			elif shape == "rectangle":
-				corners = generateCorners(4, center)
+				corners = self.generateCorners(4, self.center)
 				self.cornerPoints = corners
 			elif shape == "polygon":
 				numSides = random.randint(4,25)
-				corners = generateCorners(numSides, center)
+				corners = self.generateCorners(numSides, self.center)
 				self.cornerPoints = corners
 			elif shape == "ellipse":
-				circumferencePoints = generateEllipseCircumPts(center)
-				self.cornerPoints = circumferencePoints
+				circumfPoints = self.genEllipseCircPts(self.center)
+				self.cornerPoints = circumfPoints
+			#print(corners)
+			self.cornerPoints = corners
+			#print(self.cornerPoints)
 		else:
 			self.cornerPoints = cornerPoints
 		
@@ -121,7 +127,7 @@ class Obstacle:
 	# For randomly generated obstacles, this will used the number of
 	# sides (>= 3) and it's center and generates a list of coordinates
 	# for the corners of the obstacle.
-	def generateCorners(numSides, center):
+	def generateCorners(self, numSides, center):
 		# Store the x and y coordinates of the object's center.
 		xcoord = center[0]
 		ycoord = center[1]
@@ -132,16 +138,16 @@ class Obstacle:
 		if numSides == 3:
 			for i in range(numSides):
 				if i == 0:
-					xcorner = xcoord + random.randint(25)
-					ycorner = ycoord + random.randint(25)
+					xcorner = xcoord + random.randint(5, 25)
+					ycorner = ycoord + random.randint(5, 25)
 					cornersList.append([xcorner, ycorner])
 				elif i == 1:
-					xcorner = xcoord - random.randint(25)
-					ycorner = ycoord + random.randint(25)
+					xcorner = xcoord - random.randint(5, 25)
+					ycorner = ycoord + random.randint(5, 25)
 					cornersList.append([xcorner, ycorner])
 				elif i == 2:
-					xcorner = xcoord - random.randint(25)
-					ycorner = ycoord - random.randint(25)
+					xcorner = xcoord - random.randint(5, 25)
+					ycorner = ycoord - random.randint(5, 25)
 					cornersList.append([xcorner, ycorner])
 		# If the number of sides are more than 3.
 		else:
@@ -168,7 +174,7 @@ class Obstacle:
 
 	# For randomly generated ellipse obstacles, this will generate a
 	# list of points that will represent the corners of the ellipse.
-	def generateEllipseCircumPts(center):
+	def genEllipseCircPts(self, center):
 		# Store the x and y coordinates of the object's center.
 		xcoord = center[0]
 		ycoord = center[1]
@@ -195,20 +201,20 @@ class Obstacle:
 			circumference = math.pi * (a + b) * mult
 			n = circumference*64
 			for i in range(int(n)):
-				xpoint = xcoord + 
-				ypoint = ycoord + 
+				xpoint = xcoord + int(math.cos(2*math.pi/n*i)*a)
+				ypoint = ycoord + int(math.sin(2*math.pi/n*i)*b)
 				cornersList.append([xpoint,ypoint])
-				pass
 		# Return corners list.
 		return cornersList
 
 
 	# Draw the obstacle with a turtle.
-	def draw():
+	def draw(self):
 		# Create turtle object to draw the obstacle.
 		objTur = turtle.Turtle()
 		objTur.color("white")
 		objTur.pensize(1)
+		objTur.penup()
 
 		# Send turtle to obstacle's center.
 		objTur.goto(self.center[0], self.center[1])
@@ -218,7 +224,7 @@ class Obstacle:
 		objTur.begin_fill()
 		for coord in self.cornerPoints:
 			objTur.goto(coord[0], coord[1])
-		objTur.goto(self.cornerPoints[0][0], self.cornerPoints[0][1])
+		#objTur.goto(self.cornerPoints[0][0], self.cornerPoints[0][1])
 		objTur.end_fill()
 
 
@@ -313,11 +319,18 @@ def main():
 		print("There are "+str(numDrones)+" number of ships.")
 		print("There are "+str(numObj)+" number of obstacles.")
 
+		# Check if intitializing obstacles works.
+		obj0 = [Obstacle("traingle")]
+		#print(obj0[0].center)
+		#print(obj0[0].shape)
+		#print(obj0[0].cornerPoints)
+
 		# Check if the generateObjects() method works (ie, obstacles
 		# can be initialized without any issues.)
 		obj1 = generateObjects(numObj)
 		# Check if the drawScreen() method works (ie, can objects be
 		# drwan to the canvas without any issues.)
+		#drawScreen(obj0)
 		drawScreen(obj1)
 
 	'''
@@ -352,10 +365,15 @@ def drawScreen(obstacleList,):
 	win.title("Swarm Game")
 	win.setup(width=750, height=750, startx=25, starty=25)
 	win.bgcolor("black")
+	win.setworldcoordinates(0, 0, 750, 750)
+	#win.delay(300)
 
 	# Draw obstacles.
 	for ob in obstacleList:
 		ob.draw()
+		print(ob.center)
+		print(ob.shape)
+		print(ob.cornerPoints)
 
 	#win.exitonclick()
 	win.mainloop()
