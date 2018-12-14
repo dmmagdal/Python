@@ -9,6 +9,7 @@
 import sys
 import turtle
 import random
+import math
 
 
 # Obstacle Object class.
@@ -55,6 +56,9 @@ class Obstacle:
 				numSides = random.randint(4,25)
 				corners = generateCorners(numSides, center)
 				self.cornerPoints = corners
+			elif shape == "ellipse":
+				circumferencePoints = generateEllipseCircumPts(center)
+				self.cornerPoints = circumferencePoints
 		else:
 			self.cornerPoints = cornerPoints
 		
@@ -162,6 +166,43 @@ class Obstacle:
 		return cornersList
 
 
+	# For randomly generated ellipse obstacles, this will generate a
+	# list of points that will represent the corners of the ellipse.
+	def generateEllipseCircumPts(center):
+		# Store the x and y coordinates of the object's center.
+		xcoord = center[0]
+		ycoord = center[1]
+		# Randomly generate a height and width for the ellipse.
+		a = random.randint(5, 25)
+		b = random.randint(5, 25)
+		# List to store corners (list of [x,y] ints for the corner
+		# coordinates).
+		cornersList = []
+		# If a = b, then treat a as the radius of a circle.
+		if a == b:
+			circumference = 2 * math.pi + a
+			n = circumference*64
+			for i in range(int(n)):
+				xpoint = xcoord + int(math.cos(2*math.pi/n*i)*a)
+				ypoint = ycoord + int(math.sin(2*math.pi/n*i)*a)
+				cornersList.append([xpoint,ypoint])
+		# Otherwise, treat the obstacle as an ellipse.
+		else:
+			numerator = math.pow(a-b, 2)
+			denominator = math.pow(a+b, 2)
+			h = numerator/denominator
+			mult = 1 + ((3 * h)/(10 + math.sqrt(4 - (3 * h))))
+			circumference = math.pi * (a + b) * mult
+			n = circumference*64
+			for i in range(int(n)):
+				xpoint = xcoord + 
+				ypoint = ycoord + 
+				cornersList.append([xpoint,ypoint])
+				pass
+		# Return corners list.
+		return cornersList
+
+
 	# Draw the obstacle with a turtle.
 	def draw():
 		# Create turtle object to draw the obstacle.
@@ -189,6 +230,19 @@ class Ship:
 	ycoord = 0
 	shipNum = 0
 
+	def __init__(self, center=None, shipN=None, size=None, numS=None):
+		if center == None and size != None:
+			self.xcoord = random.randint(5, size-5)
+			self.ycoord = random.randint(5, size-5)
+		elif center != None:
+			self.xcoord = center[0]
+			self.ycoord = center[1]
+		if shipNum == None:
+			self.shipNum = random.randint(1, numS)
+		else:
+			self.shipNum = shipN
+
+	'''
 	def __init__(self, screensize):
 		self.xcoord = random.randint(5, screensize-5)
 		self.ycoord = random.randint(5, screensize-5)
@@ -199,8 +253,16 @@ class Ship:
 		self.xcoord = center[0]
 		self.ycoord = center[1]
 		self.shipNum = shipNum
+	'''
 
 
+	def draw():
+		ship = turtle.Turtle()
+		ship.color("red")
+		ship.penup()
+
+
+	# Move the ship until 
 	def fly():
 		pass
 
@@ -208,7 +270,7 @@ class Ship:
 	# Return a boolean telling if the ship is about to collide with an
 	# obstacle.
 	def collision():
-		pass
+		return False
 
 
 
