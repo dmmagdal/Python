@@ -47,26 +47,48 @@ class Obstacle:
 		else:
 			self.center = center
 		# Set cornerpoints.
+		if cornerPoints == None and shape == "traingle":
+			corners = self.generateCorners(3, self.center)
+			self.cornerPoints = corners 
+		elif cornerPoints == None and shape == "rectangle":
+			corners = self.generateCorners(4, self.center)
+			self.cornerPoints = corners
+		elif cornerPoints == None and shape == "polygon":
+			numSides = random.randint(4,25)
+			corners = self.generateCorners(numSides, self.center)
+			self.cornerPoints = corners
+		elif cornerPoints == None and shape == "ellipse":
+			circumfPoints = self.genEllipseCircPts(self.center)
+			self.cornerPoints = circumfPoints
+		else:
+			self.cornerPoints = cornerPoints
+		print(self.cornerPoints)
+		'''
 		if cornerPoints == None:
-			corners = []
+			deltacorners = []
 			if shape == "traingle":
 				corners = self.generateCorners(3, self.center)
-				self.cornerPoints = corners 
+				self.cornerPoints = corners
+				deltacorners = corners 
 			elif shape == "rectangle":
 				corners = self.generateCorners(4, self.center)
 				self.cornerPoints = corners
+				deltacorners = corners
 			elif shape == "polygon":
 				numSides = random.randint(4,25)
 				corners = self.generateCorners(numSides, self.center)
 				self.cornerPoints = corners
+				deltacorners = corners
 			elif shape == "ellipse":
 				circumfPoints = self.genEllipseCircPts(self.center)
 				self.cornerPoints = circumfPoints
+				deltacorners = circumfPoints
 			#print(corners)
-			self.cornerPoints = corners
+			self.cornerPoints = deltacorners
 			#print(self.cornerPoints)
-		else:
-			self.cornerPoints = cornerPoints
+			'''
+		
+		
 		
 
 	'''
