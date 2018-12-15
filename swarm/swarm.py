@@ -25,18 +25,6 @@ class Obstacle:
 		# Set shape.
 		if shape == None:
 			self.shape = random.choice(self.__shapeList)
-			'''
-			if shape == "traingle":
-				corners = generateCorners(3, center)
-				self.cornerPoints = corners 
-			elif shape == "rectangle":
-				corners = generateCorners(4, center)
-				self.cornerPoints = corners
-			elif shape == "polygon":
-				numSides = random.randint(4,25)
-				corners = generateCorners(numSides, center)
-				self.cornerPoints = corners
-			'''
 		else:
 			self.shape = shape
 		# Set center.
@@ -63,87 +51,6 @@ class Obstacle:
 		else:
 			self.cornerPoints = cornerPoints
 		print(self.cornerPoints)
-		'''
-		if cornerPoints == None:
-			deltacorners = []
-			if shape == "traingle":
-				corners = self.generateCorners(3, self.center)
-				self.cornerPoints = corners
-				deltacorners = corners 
-			elif shape == "rectangle":
-				corners = self.generateCorners(4, self.center)
-				self.cornerPoints = corners
-				deltacorners = corners
-			elif shape == "polygon":
-				numSides = random.randint(4,25)
-				corners = self.generateCorners(numSides, self.center)
-				self.cornerPoints = corners
-				deltacorners = corners
-			elif shape == "ellipse":
-				circumfPoints = self.genEllipseCircPts(self.center)
-				self.cornerPoints = circumfPoints
-				deltacorners = circumfPoints
-			#print(corners)
-			self.cornerPoints = deltacorners
-			#print(self.cornerPoints)
-			'''
-		
-		
-		
-
-	'''
-	#------------------------------------------------------------------
-	# constructors no longer needed.
-	#------------------------------------------------------------------
-	def __init__(self):
-		self.shape = random.choice(self.__shapeList)
-		randX = random.randint()
-		randY = random.randint()
-		self.center = [randX, randY]
-		if shape == "traingle":
-			corners = generateCorners(3, center)
-			self.cornerPoints = corners 
-		elif shape == "rectangle":
-			corners = generateCorners(4, center)
-			self.cornerPoints = corners
-		elif shape == "polygon":
-			numSides = random.randint(4,25)
-			corners = generateCorners(numSides, center)
-			self.cornerPoints = corners
-
-
-	def __init__(self, shape, center):
-		self.shape = shape
-		self.center = center
-		if shape == "traingle":
-			corners = generateCorners(3, center)
-			self.cornerPoints = corners 
-		elif shape == "rectangle":
-			corners = generateCorners(4, center)
-			self.cornerPoints = corners
-		elif shape == "polygon":
-			numSides = random.randint(4,25)
-			corners = generateCorners(numSides, center)
-			self.cornerPoints = corners
-
-
-	def __init__(self, center, cornerPoints):
-		self.cornerPoints = cornerPoints
-		self.center = center
-		numPoints = len(cornerPoints)
-		if numPoints == 3:
-			self.shape = "traingle"
-		elif numPoints == 4:
-			self.shape = "rectangle"
-		elif numPoints > 4:
-			self.shape = "polygon"
-
-
-	def __init__(self, shape, center, cornerPoints):
-		self.shape = shape
-		self.center = center
-		self.cornerPoints = cornerPoints
-	'''
 
 
 	# For randomly generated obstacles, this will used the number of
@@ -269,19 +176,6 @@ class Ship:
 			self.shipNum = random.randint(1, numS)
 		else:
 			self.shipNum = shipN
-
-	'''
-	def __init__(self, screensize):
-		self.xcoord = random.randint(5, screensize-5)
-		self.ycoord = random.randint(5, screensize-5)
-		self.shipNum = random.randint()
-
-
-	def __init__(self, center, shipNum):
-		self.xcoord = center[0]
-		self.ycoord = center[1]
-		self.shipNum = shipNum
-	'''
 
 
 	def draw():
