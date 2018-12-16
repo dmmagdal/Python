@@ -33,7 +33,7 @@ class Obstacle:
 			self.shape = shape
 		# Set center.
 		if center == None:
-			randX = random.randint(50, 650)
+			randX = random.randint(75, 650)
 			randY = random.randint(0, 750)
 			self.center = [randX, randY]
 		else:
@@ -264,7 +264,7 @@ def main():
 		ship1 = createFleet(numDrones)
 		obj1 = generateObjects(numObj)
 		# Check if the drawScreen() method works (ie, can objects be
-		# drwan to the canvas without any issues.)
+		# drawn to the canvas without any issues.)
 		#drawScreen(obj0)
 		#drawScreen(obj1)
 		#drawScreen([], ship0)
@@ -299,12 +299,12 @@ def createFleet(numDrones):
 		if mod == 0:
 			# Randomly initialize the starting x,y coordinates of the
 			# squadron leader. 
-			xstart = random.randint(35, 50)
-			ystart = random.randint(25, 725)
+			xstart = random.randint(25, 50)
+			ystart = random.randint(50, 700)
 			# As long as the ystart value is within an edgelist of
 			# another squadron, continue to randomize it.
 			while inEdgeList(edgeList, ystart):
-				ystart = random.randint(25, 725)
+				ystart = random.randint(50, 700)
 			# Increment the squadron number.
 			squadNum = squadNum+1
 			# Initialize the Ship object for the squadron leader. Then
@@ -341,10 +341,10 @@ def createFleet(numDrones):
 def inEdgeList(edgeList, ystart):
 	# Iterate through the edge list.
 	for i in edgeList:
-		# If the ystart value is less than the left edge - 35 (35 being
+		# If the ystart value is less than the left edge - 85 (85 being
 		# the safety distance between squadrons) or is greater than the
-		# right edge + 35, then return False.
-		if ystart >= i[0]-35 or ystart <= i[1]+35:
+		# right edge + 85, then return False.
+		if ystart >= i[0]-85 and ystart <= i[1]+85:
 			return True
 	# Otherwise, the ystart value is not within any squadron. Return
 	# True.
