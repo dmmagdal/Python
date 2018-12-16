@@ -311,6 +311,7 @@ def createFleet(numDrones):
 			# append it to the list of ships.
 			leader = Ship([xstart, ystart], i)
 			shipList.append(leader)
+			edgeList.append([leader.ycoord-21, leader.ycoord+21])
 		elif mod == 1:
 			xstart = leader.xcoord-12
 			ystart = leader.ycoord+7
@@ -341,10 +342,10 @@ def createFleet(numDrones):
 def inEdgeList(edgeList, ystart):
 	# Iterate through the edge list.
 	for i in edgeList:
-		# If the ystart value is less than the left edge - 85 (85 being
+		# If the ystart value is less than the left edge - 35 (35 being
 		# the safety distance between squadrons) or is greater than the
-		# right edge + 85, then return False.
-		if ystart >= i[0]-85 and ystart <= i[1]+85:
+		# right edge + 35, then return False.
+		if ystart >= i[0]-35 and ystart <= i[1]+35:
 			return True
 	# Otherwise, the ystart value is not within any squadron. Return
 	# True.
