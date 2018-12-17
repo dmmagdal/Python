@@ -14,6 +14,7 @@ import sys
 import turtle
 import random
 import math
+import time
 
 
 # Obstacle Object class.
@@ -173,6 +174,7 @@ class Ship:
 	xcoord = 0
 	ycoord = 0
 	shipNum = 0
+	velocity = [0, 0]
 
 	def __init__(self, center=None, shipN=None, numS=None):
 		if center == None:
@@ -196,14 +198,55 @@ class Ship:
 		ship.penup()
 
 
-	# Move the ship until 
-	def fly():
+	# For test pilot only. Uses a set of possible moves to try and
+	# solve the map without crashing. If a solution exists, it will
+	# return a path of actions. Otherwise, the method will return None.
+	def solveMap(self, objList):
+		actions = [flyFwd(5), bankLeft(5), bankRight(5), stop(),
+					flyBack(5)]
+		return None
+
+
+	# Move the ship until value specified (in pixels) or until object
+	# is detected.
+	def flyFwd(self, value=None):
+		pass
+
+
+	# Turn the ship left a certain number of degress or until object is
+	# detected.
+	def bankLeft(self, degree=None):
+		pass
+
+
+	# Turn the ship right a certain number of degress or until object is
+	# detected.
+	def bankRight(self, degree=None):
+		pass
+
+
+	# Stop the ship. If a time is specified, only pause for that amount
+	# of time. Otherwise, the ship is stopped until it is started again
+	# by another method.
+	def stop(self, sleepTime=None):
+		if time != None:
+			oldVelocity = self.velocity
+			self.velocity = [0, 0]
+			time.sleep(sleepTime)
+			self.velocity = oldVelocity
+		else:
+			self.velocity = [0, 0]
+
+
+	# Move the ship back until value specified (in pixels) or until
+	# object is detected. Ship flies back at half velocity.
+	def flyBack(self, value=None):
 		pass
 
 
 	# Return a boolean telling if the ship is about to collide with an
 	# obstacle.
-	def collision():
+	def collision(objList):
 		return False
 
 
@@ -365,7 +408,11 @@ def generateObjects(numObjs):
 
 # Check if a solution exists given the current map.
 def solutionExists(objList):
-	return True
+	# Create single ship and see if it can get through the map.
+	testShip = Ship([45, 375], 1)
+	if testShip.solveMap(objectsList) != None:
+		return True
+	return False
 
 
 # Draw the current screen.
