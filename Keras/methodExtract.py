@@ -10,7 +10,7 @@ import sys
 
 def main():
 	# If there isn't a target file given (Note: target file must be in
-	# same directory as program).
+	# same directory as program) then give an error message and exit.
 	if len(sys.argv) != 2:
 		print("Error: Usage python methodExtract.py <targetfile>")
 		exit(1)
