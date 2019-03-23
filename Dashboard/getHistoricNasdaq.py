@@ -8,6 +8,7 @@ import os
 import sys
 import requests
 import csv
+import urllib
 from bs4 import BeautifulSoup as bsoup
 
 
@@ -15,6 +16,11 @@ def main():
 	# Check length of file args.
 	if len(sys.argv) != 2:
 		print("Error: Usage python getHistoricNasdaq.py <ticker>")
+		exit(1)
+
+	# Check internet conectivity.
+	if not internetConnected():
+		print("Error: No internet connection")
 		exit(1)
 
 	# String for ticker symbol.
@@ -108,6 +114,26 @@ def main():
 
 	# Exit the program.
 	exit(0)
+
+
+# Check to see if there is an internet connection.
+# @param, takes no arguments.
+# #return, returns a boolean True if there is internet. False
+#	otherwise.
+def internetConnected():
+	# Initialize return variable.
+	status = True
+
+	# Test for a connection.
+	try:
+		url = "https://www.google.com"
+		urllib.request(url)
+		status = True
+	except :
+		status = False
+
+	# Return the boolean.
+	return status
 
 
 # Load the data from the csv.

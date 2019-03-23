@@ -16,29 +16,29 @@ from win10toast import ToastNotifier
 def main():
 	# Check log file for last runtime.
 	lastRun = checkLog()
-	print(lastRun)
+	print("Program last run on "+lastRun)
 
 	# If the program has not been run today, run all operations.
 	currTime = datetime.datetime.now()
 	prevTime = datetime.datetime.strptime(lastRun, "%Y-%m-%d %H:%M:%S.%f")
 	diff = currTime - prevTime
 	if diff.days > 0:
-		print("It has been a day")
+		print("It has been at least a day since last run")
 		appendLog(currTime)
 		appendInvestments(loadInvest())# Temporary until there can be
-		#									updates.
+									   # updates.
 	else:
-		print("It has not been a day")
+		print("It has not been a day since last run")
 
 	# Load investment data.
 	investments = loadInvest()
 	print(investments)
 
 	# Set investment variables (parse data into a more usable format)
-	accntVals = investments.split(",")[:4]
-	for val in accntVals:
-		val = round(float(val), 2)
-	investDataStr = investments.split(",")[4:]
+	#accntVals = investments.split(",")[:4]
+	#for val in accntVals:
+	#	val = round(float(val), 2)
+	#investDataStr = investments.split(",")[4:]
 
 	# Enter infinite loop.
 	#while True:
@@ -91,10 +91,21 @@ def loadInvest():
 	# File does not exits. Before returning the string, create
 	# the file and write in the starting values.
 	investmentFile = open("investmentLogs.txt", 'w')
-	startingVal = "500, 0, 500, 0, []\n"
+	startingVal = str(datetime.datetime.now())+" , 500, 0, 500, 0\n"
 	investmentFile.write(startingVal) # Arbitrary value of money to
-	#											invest.
+									  # invest.
 	investmentFile.close()
+	# Format for investments file:
+	# Date, BankAMT, InvestedAMT, NetWorth, Total%ChngFromPrevDay
+	#		[listOfInvestments]
+	# Format for listOfInvestents:
+	# [symbol, exchange, numShares]
+	# All investments in listOfInvestments List have their own line. So
+	# the "header" of this data is the first list, then the 
+	# listOfInvestments list follows after. The plan is to migrate this
+	# so that every user has a file specific to them, but the file
+	# format remains the same (apply to ALL log files).
+	# ----------------------OLD FORMAT---------------------------------
 	# Format for investments file:
 	# BankAMT, InvestedAMT, NetWorth, Total%ChngFromPrevDay,
 	#	[listOfInvestments]
@@ -105,6 +116,7 @@ def loadInvest():
 	# 	two decimal places.
 	# Note: all numerical values in the listOfInvestments are to be
 	#	to be floats rounded to two decimal places.
+	# -----------------------------------------------------------------
 	return startingVal
 
 
