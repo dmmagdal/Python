@@ -82,9 +82,59 @@ def main():
 	# only).
 	fileTitle = os.getcwd()+"\\NASDAQ\\nasdaq_"+ticker+"_History.csv"
 	if os.path.exists(fileTitle):
-		writeToCSV(fileTitle, "a", rows) 
+		# Given that we have to append data to the file, it's best to
+		# Not append repeat information from the csv. Best way to do
+		# that is by checking the dates that have already been loaded
+		# in.
+		# Load the existing dates from the csv.
+		csvDates = readFromCSV(fileTitle)
+
+		# Compare the dates in the current data with the ones pulled
+		# from the csv. The ones that match are thrown out. The rest
+		# are written.
+		iterator = 0
+		while len(rows) != 0 and iterator != len(rows):
+			row = rows[iterator]
+			if row[0] in csvDates:
+				rows.remove(row)
+			else:
+				iterator = iterator + 1
+
+		# Write the remaining content to the list.
+		if len(rows) > 0:
+			writeToCSV(fileTitle, "a", rows) 
 	else:
 		writeToCSV(fileTitle, "w", rows)
+
+	# Exit the program.
+	exit(0)
+
+
+# Load the data from the csv.
+# @param, fileTitle: the title/path of the file.
+# @return, returns a datatype containing a list of all datas in the csv
+#	file.
+def readFromCSV(fileTitle):
+	# List of dates to be returned.
+	dateList = []
+
+	# Open the file.
+	file = open(fileTitle, "r")
+	fileReader = csv.reader(file, delimiter=",")
+
+	# Iterate through the rows, appending all dates to the list.
+	for row in fileReader:
+		if "Date" in row[0]:
+			continue
+		else:
+			#print(row[0])
+			dateList.append(row[0])
+
+	# Close file.
+	file.close()
+
+	# Return the list.
+	return dateList
 
 
 # Write data to csv. 
