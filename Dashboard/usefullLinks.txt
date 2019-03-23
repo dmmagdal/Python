@@ -1,0 +1,14 @@
+Download Ticker symbols from a market
+	http://www.eoddata.com/symbols.aspx
+	Must have log in (look at Aiden's account)
+	Has NASDAQ, NYSE, and CBOE (Chicago Board of Trade)
+
+Send Request to NASDAQ given a ticker
+	'https://www.nasdaq.com/symbol/'+ticker+'/real-time'
+
+Send Request to NYSE given a ticker
+	'https://www.nyse.com/quote/'+ticker.upper()
+
+Send Request to CBOE given a ticker
+	'http://www.cboe.com/delayedquote/advanced-charts?ticker='+ticker.upper()
+
