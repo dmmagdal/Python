@@ -19,6 +19,7 @@ def main():
 		exit(1)
 
 	# Check internet conectivity.
+	#print(internetConnected())
 	if not internetConnected():
 		print("Error: No internet connection")
 		exit(1)
@@ -125,11 +126,9 @@ def internetConnected():
 	status = True
 
 	# Test for a connection.
-	try:
-		url = "https://www.google.com"
-		urllib.request(url)
-		status = True
-	except :
+	r = requests.get("https://www.google.com/")
+	# Set return to false if the connection failed.
+	if r.status_code != requests.codes.ok:
 		status = False
 
 	# Return the boolean.
