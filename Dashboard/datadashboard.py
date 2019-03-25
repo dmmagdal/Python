@@ -16,22 +16,24 @@ from win10toast import ToastNotifier
 def main():
 	# Check log file for last runtime.
 	lastRun = checkLog()
-	print("Program last run on "+lastRun)
+	print("Program last run on "+lastRun+"\n")
 
 	# If the program has not been run today, run all operations.
 	currTime = datetime.datetime.now()
+	#print(currTime)
 	prevTime = datetime.datetime.strptime(lastRun, "%Y-%m-%d %H:%M:%S.%f")
 	diff = currTime - prevTime
 	if diff.days > 0:
 		print("It has been at least a day since last run")
 		appendLog(currTime)
-		appendInvestments(loadInvest())# Temporary until there can be
+		appendInvest(loadInvest())# Temporary until there can be
 									   # updates.
 	else:
 		print("It has not been a day since last run")
 
 	# Load investment data.
 	investments = loadInvest()
+	print("Investments Data:")
 	print(investments)
 
 	# Set investment variables (parse data into a more usable format)
@@ -57,7 +59,7 @@ def checkLog():
 		logFile = open("logs.txt", 'r')
 		logLines = logFile.readlines()
 		logFile.close()
-		return logLines[len(logLines)-1]
+		return logLines[len(logLines)-1].strip("\n")
 	# File does not exits. Before returning current timestamp, create
 	# the file and append this current time.
 	logFile = open("logs.txt", 'w')
@@ -83,11 +85,26 @@ def loadInvest():
 	# Check to see if the investment file exists. If it doesn't, return
 	# an arbitrary initial value.
 	if os.path.exists("investmentLogs.txt"):
-		# Logs file does exist. Read the last entry.
+		# Logs file does exist. Read all lines to a list
+		# (investmentsLines) and close the file.
 		investmentFile = open("investmentLogs.txt", 'r')
-		investments = investmentFile.readlines()
+		investmentsLines = investmentFile.readlines()
 		investmentFile.close()
-		return investments[len(investments)-1]
+		# Find the endOfFile index (length of the read in list - 1).
+		endOfFile = len(investmentsLines)-1
+		# Iterate backwards through the list. Find the most recent
+		# "header" entry for the file. Headers are the lines that
+		# contain Date, BankAMT, InvestedAMT, NetWorth,
+		# Total%ChngFromPrevDay. You can find the headers by looking
+		# for the first line that doesn't start with a tab "\t", those
+		# are lines that contain the list of current investments
+		# (listOfInvestments).
+		while endOfFile >= 0:
+			if investmentsLines[0] != "\t":
+				break
+			else:
+				endOfFile = endOfFile - 1 
+		return investmentsLines[endOfFile:]
 	# File does not exits. Before returning the string, create
 	# the file and write in the starting values.
 	investmentFile = open("investmentLogs.txt", 'w')
@@ -99,12 +116,16 @@ def loadInvest():
 	# Date, BankAMT, InvestedAMT, NetWorth, Total%ChngFromPrevDay
 	#		[listOfInvestments]
 	# Format for listOfInvestents:
-	# [symbol, exchange, numShares]
+	# Symbol, Exchange, NumShares
 	# All investments in listOfInvestments List have their own line. So
 	# the "header" of this data is the first list, then the 
 	# listOfInvestments list follows after. The plan is to migrate this
 	# so that every user has a file specific to them, but the file
 	# format remains the same (apply to ALL log files).
+	# Strings: Date, Symbol, Exchange
+	# Floats (round to 2 decimal places): BankAMT, Invested, NetWorth,
+	#	Total%ChngFromPrevDay
+	# Ints: NumShares
 	# ----------------------OLD FORMAT---------------------------------
 	# Format for investments file:
 	# BankAMT, InvestedAMT, NetWorth, Total%ChngFromPrevDay,
@@ -124,7 +145,7 @@ def loadInvest():
 # @param, newInvestments: the string of investment data to be appended
 #	to the logs.
 # @return, returns nothing.
-def appendInvestments(newInvestments):
+def appendInvest(newInvestments):
 	investmentFile = open("investmentLogs.txt", 'a')
 	investmentFile.write(newInvestments+"\n")
 	investmentFile.close()
