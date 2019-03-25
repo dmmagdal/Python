@@ -10,6 +10,7 @@ import os
 import sys
 import datetime
 import time
+from tkinter import *
 from win10toast import ToastNotifier
 
 
@@ -20,27 +21,47 @@ def main():
 
 	# If the program has not been run today, run all operations.
 	currTime = datetime.datetime.now()
-	#print(currTime)
 	prevTime = datetime.datetime.strptime(lastRun, "%Y-%m-%d %H:%M:%S.%f")
 	diff = currTime - prevTime
 	if diff.days > 0:
 		print("It has been at least a day since last run")
+		# Append the current time to the log.
 		appendLog(currTime)
 		appendInvest(loadInvest())# Temporary until there can be
-									   # updates.
+								  # updates.
 	else:
 		print("It has not been a day since last run")
 
 	# Load investment data.
 	investments = loadInvest()
 	print("Investments Data:")
-	print(investments)
+	#print(investments)
+	#print(type(investments))
+	#print(len(investments))
 
-	# Set investment variables (parse data into a more usable format)
+	# Set investment variables (parse data into a more usable format).
+	accntVals = investments[0].split(",")
+	for point in range(len(accntVals)):
+		accntVals[point] = accntVals[point].strip("\n").lstrip(" ")
+		print(accntVals[point])
+
+	print(str(72*"-"))
+	# Load investment data (parse data into a more usable format).
+	investmentData = []
+	if len(investments) != 1:
+		investmentData[1:]
+		for dataPt in range(len(investmentData)):
+			investmentData[dataPt] = investmentData[dataPt].strip("\n")
+			print(investmentData[dataPt])
+	else:
+		print("No investments saved.")
+
 	#accntVals = investments.split(",")[:4]
 	#for val in accntVals:
 	#	val = round(float(val), 2)
 	#investDataStr = investments.split(",")[4:]
+
+	loadGUI(accntVals, investmentData)
 
 	# Enter infinite loop.
 	#while True:
@@ -138,7 +159,7 @@ def loadInvest():
 	# Note: all numerical values in the listOfInvestments are to be
 	#	to be floats rounded to two decimal places.
 	# -----------------------------------------------------------------
-	return startingVal
+	return [startingVal.strip("\n")]
 
 
 # Append (current) investments to the investments logs.
@@ -147,7 +168,9 @@ def loadInvest():
 # @return, returns nothing.
 def appendInvest(newInvestments):
 	investmentFile = open("investmentLogs.txt", 'a')
-	investmentFile.write(newInvestments+"\n")
+	#investmentFile.write(newInvestments+"\n")
+	for line in newInvestments:
+		investmentFile.write(line+"\n")
 	investmentFile.close()
 
 
@@ -158,6 +181,29 @@ def appendInvest(newInvestments):
 def notifyWin(title, msg):
 	notify = ToastNotifier()
 	notify.show_toast(title, msg)
+
+
+# Load the first GUI's page.
+# @param, accntVals: Load all account values from the logs.
+# @param, investmentData: Load all investments from the user's logs.
+# @return, returns nothing.
+def loadGUI(accntVals, investmentData):
+	# Initialize GUI.
+	m = Tk()
+	m.title("Dashboard Client")
+	m.geometry("675x550")
+
+	# Listbox and listbox for previous console data.
+	scrollbar = Scrollbar(m)
+	console = Listbox(m, width=80, height=20,
+					  yscrollcommand=scrollbar.set)
+	consoleEntry = Entry(m)
+	scrollbar.pack(side="left")
+	console.pack(side="left")
+	consoleEntry.pack(side="left")
+
+	
+	m.mainloop()
 
 
 if __name__ == '__main__':
