@@ -11,6 +11,7 @@ import sys
 import datetime
 import time
 from tkinter import *
+import socket
 from win10toast import ToastNotifier
 
 
@@ -61,7 +62,9 @@ def main():
 	#	val = round(float(val), 2)
 	#investDataStr = investments.split(",")[4:]
 
-	loadGUI(accntVals, investmentData)
+	loadLogin()
+	# UNCOMMENT LATER
+	#loadGUI(accntVals, investmentData)
 
 	# Enter infinite loop.
 	#while True:
@@ -181,6 +184,110 @@ def appendInvest(newInvestments):
 def notifyWin(title, msg):
 	notify = ToastNotifier()
 	notify.show_toast(title, msg)
+
+
+# Display the log in screen for the user.
+# @param, takes no arguments.
+# @return, returns nothing.
+def loadLogin():
+	# Initialize GUI.
+	m = Tk()
+	m.title("Dashboard LogIn")
+	m.geometry("300x400")
+	
+	# Entry boxes for username, password, and server IP.
+	usernameLbl = Label(m, text="username")
+	passwordLbl = Label(m, text="password")
+	serverIPLbl = Label(m, text="server ip")
+	username = Entry(m)
+	password = Entry(m)
+	serverIP = Entry(m)
+
+	# Checkbox to remember user.
+	var = IntVar()
+	rememberMe = Checkbutton(m, text="Remember Me", variable=var,
+							 command=(lambda x: rememberUser(var)))
+
+	# Buttons for logging in, creating a new user, or if a user forgot
+	# their password.
+	logInBtn = Button(m, text="Log In",
+					  command=(lambda: logIn(m,
+					  						 username.get(),
+					  						 password.get(),
+					  						 serverIP.get())))
+	newUserBtn = Button(m, text="New User",
+						command=(lambda: createNewUser(m,
+													serverIP.get())))
+	forgotPassBtn = Button(m, text="Forgot Passord",
+						   command=(lambda: forgotPassword(m,
+						   							serverIP.get())))
+
+	# Layout the widgets.
+	usernameLbl.grid(column=0, row=1, sticky="E")
+	username.grid(column=1, row=1, sticky="E")
+	passwordLbl.grid()
+	password.grid(column=1, row=2, pady=10)
+	serverIPLbl.grid()
+	serverIP.grid(column=1, row=3, pady=10)
+	rememberMe.grid(column=1, row=4)
+	logInBtn.grid(column=1, row=5)
+	newUserBtn.grid(column=1, row=7, pady=25)
+	forgotPassBtn.grid(column=1, row=8)
+
+	m.mainloop()
+
+
+# Log into the user's account on the server.
+# @param, m: a tkinter object of the login window.
+# @param, username: a string from the tkinter entry that contains the
+#	user's username.
+# @param, password: a string from the tkinter entry that contains the
+#	user's password.
+# @param, serverIP: a string that contains the ip address of the server
+#	the user wants to connect to.
+# @return, returns nothing.
+def logIn(m, username, password, serverIP):
+	# Check if any of the parameters are empty.
+	entryList = [username, password, serverIP]
+	if None in entryList:
+		# Print Error messagebox. Exit method.
+		return
+	# Try connecting to server. Upon successful connection, load data
+	# to client and close the login page. Otherwise, print Error
+	# messagebox and exit method.
+	pass
+
+
+# Create a new user account on the server.
+# @param, m: a tkinter object of the login window.
+# @param, serverIP: a string that contains the ip address of the server
+#	the user wants to connect to.
+# @return, returns nothing.
+def createNewUser(m, serverIP):
+	# Try logging into server under "newGuest" account. Upon successful
+	# connection, have the user fill out a new form with their 
+	# credentials. Then redirect back to the login page. Otherwise,
+	# print Error messagebox and exit method.
+	try:
+		pass
+	except Exception as e:
+		raise e
+	pass
+
+
+# User forgot their password. Redirect them to a window where they can
+# enter the email they used when they registered.
+# @param, m: a tkinter object of the login window.
+# @param, serverIP: a string that contains the ip address of the server
+#	the user wants to connect to.
+# @return, returns nothing.
+def forgotPassword(m, serverIP):
+	# Try logging into the server under "otherGuest" account (different
+	# from "newGuest"). Upon successful connection, have the user enter
+	# their email into a form and have the program send a recovery
+	# email with their password. Otherwise, print Error messagebox and
+	# exit method.
+	pass
 
 
 # Load the first GUI's page.
