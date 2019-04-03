@@ -1,3 +1,5 @@
 win10toast
 
-BeautifulSoup
+
+bs4
+cryptography

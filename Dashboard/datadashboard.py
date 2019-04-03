@@ -11,7 +11,11 @@ import sys
 import datetime
 import time
 from tkinter import *
+from tkinter import messagebox
 import socket
+import cryptography
+from cryptography.fernet import Fernet
+
 from win10toast import ToastNotifier
 
 
@@ -194,19 +198,50 @@ def loadLogin():
 	m = Tk()
 	m.title("Dashboard LogIn")
 	m.geometry("300x400")
+	logoImg = PhotoImage(file="dblogo.png")
+	logoLbl = Label(image=logoImg)
+	logoLbl.grid(column=1, row=0, columnspan=1, padx=25, pady=15)
 	
 	# Entry boxes for username, password, and server IP.
 	usernameLbl = Label(m, text="username")
 	passwordLbl = Label(m, text="password")
 	serverIPLbl = Label(m, text="server ip")
 	username = Entry(m)
-	password = Entry(m)
+	password = Entry(m, show="*")
 	serverIP = Entry(m)
 
-	# Checkbox to remember user.
+	# Checkbox to remember user. This box will already be "checked"
+	# upon loading if there exists a file called "remuser.txt" and
+	# its contents can be loaded and decrypted to text. Those contents
+	# are then loaded into the entries for username and password.
+	# ServerIP is not stored.
 	var = IntVar()
+
+	# Check to see if file exits. Otherwise, continue as normal.
+	if os.path.exists("remuser.txt") and os.path.isfile("remuser.txt"):
+		# Since it does, load the files.
+		file = open("remuser.txt", "rb")
+		lines = file.readlines()
+		file.close()
+		keyFile = open("user.key", "rb")
+		key = keyFile.read()
+		keyFile.close()
+		# Encrypted user data loaded in.
+		user = lines[0]
+		passw = lines[1]
+		# Decrypt the data.
+		f = Fernet(key)
+		decrypUser = f.decrypt(user).decode("utf-8")
+		decrypPass = f.decrypt(passw).decode("utf-8")
+
+		# Set the entry values. Keep the listbox checked.
+		username.insert(0, decrypUser)
+		password.insert(0, decrypPass)
+		var.set(1)
+
 	rememberMe = Checkbutton(m, text="Remember Me", variable=var,
-							 command=(lambda x: rememberUser(var)))
+							 onvalue=1, offvalue=0)
+							# command=(lambda x: rememberUser(var)))
 
 	# Buttons for logging in, creating a new user, or if a user forgot
 	# their password.
@@ -214,7 +249,8 @@ def loadLogin():
 					  command=(lambda: logIn(m,
 					  						 username.get(),
 					  						 password.get(),
-					  						 serverIP.get())))
+					  						 serverIP.get(),
+					  						 var)))
 	newUserBtn = Button(m, text="New User",
 						command=(lambda: createNewUser(m,
 													serverIP.get())))
@@ -223,11 +259,11 @@ def loadLogin():
 						   							serverIP.get())))
 
 	# Layout the widgets.
-	usernameLbl.grid(column=0, row=1, sticky="E")
-	username.grid(column=1, row=1, sticky="E")
+	usernameLbl.grid(column=0, row=1)
+	username.grid(column=1, row=1)
 	passwordLbl.grid()
 	password.grid(column=1, row=2, pady=10)
-	serverIPLbl.grid()
+	serverIPLbl.grid(padx=15)
 	serverIP.grid(column=1, row=3, pady=10)
 	rememberMe.grid(column=1, row=4)
 	logInBtn.grid(column=1, row=5)
@@ -246,12 +282,47 @@ def loadLogin():
 # @param, serverIP: a string that contains the ip address of the server
 #	the user wants to connect to.
 # @return, returns nothing.
-def logIn(m, username, password, serverIP):
-	# Check if any of the parameters are empty.
+def logIn(m, username, password, serverIP, checked):
+	# Check if any of the parameters are empty. None should be empty.
 	entryList = [username, password, serverIP]
-	if None in entryList:
+	if None in entryList or "" in entryList:
 		# Print Error messagebox. Exit method.
+		errStr = "Please fill out all entries before logging in."
+		messagebox.showerror("Error", errStr)
 		return
+
+	# Depending of the variable from the checkbutton, either store the
+	# input to a file encrypted if the button is toggled "on" or delete
+	# the old file if the box is toggled to "off".
+	if checked.get() == 1:
+		# Generate new key. Store it to file.
+		key = Fernet.generate_key()
+		keyFile = open("user.key", "wb")
+		keyFile.write(key)
+		keyFile.close()
+		# Encrypt the user data. First turn the strings to bytes with
+		# encode().
+		userBytes = username.encode()
+		passBytes = password.encode()
+		# Create an encryption function based on the key generated.
+		f = Fernet(key)
+		# Encrypt the byte data given the encryption function.
+		encryptedUser = f.encrypt(userBytes)
+		encryptedPass = f.encrypt(passBytes)
+		# Write the data to file.
+		file = open("remuser.txt", "wb")
+		file.write(encryptedUser)
+		file.write("\n".encode("utf-8"))
+		file.write(encryptedPass)
+		file.close()
+	else:
+		# Delete the files.
+		os.remove("remuser.txt")
+		os.remove("user.key")
+
+	# Destroy the login window (Close it).
+	m.destroy()
+
 	# Try connecting to server. Upon successful connection, load data
 	# to client and close the login page. Otherwise, print Error
 	# messagebox and exit method.
