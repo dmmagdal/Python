@@ -239,9 +239,9 @@ def loadLogin():
 		password.insert(0, decrypPass)
 		var.set(1)
 
+	# Checkbutton to remember a user or not.
 	rememberMe = Checkbutton(m, text="Remember Me", variable=var,
 							 onvalue=1, offvalue=0)
-							# command=(lambda x: rememberUser(var)))
 
 	# Buttons for logging in, creating a new user, or if a user forgot
 	# their password.
@@ -340,10 +340,93 @@ def createNewUser(m, serverIP):
 	# credentials. Then redirect back to the login page. Otherwise,
 	# print Error messagebox and exit method.
 	try:
-		pass
+		# Try connecting to the server.
+		connection = None
+
+		# Once connected, load a GUI window for the user to enter their
+		# new credentials.
+		# Close the previous window.
+		m.destroy()
+		# New tkinter GUI object for the window.
+		m2 = Tk()
+		m2.title("Create New Dashboard Account")
+		m2.geometry("300x400")
+
+		# Labels for the entries.
+		newUserLbl = Label(m2, text="New Username")
+		newPassLbl = Label(m2, text="New Password")
+		newPassLbl2 = Label(m2, text="Re-enter Password")
+		newUserEmailLbl = Label(m2, text="Your recovery email")
+
+		# Entries for the new user to enter their information.
+		newUser = Entry(m2)
+		newPass = Entry(m2, show="*")
+		newPass2 = Entry(m2, show="*")
+		newUserEmail = Entry(m2)
+
+		# Buttons to either affirm or cancel the registration.
+		createUserBtn = Button(m2, text="Create Account", 
+							command=(lambda: saveNewUser(newUser.get(),
+													newPass.get(),
+													newPass2.get(),
+													newUserEmail.get(),
+													connection,
+													m2)))
+		cancelBtn = Button(m2, text="Cancel", 
+							command=(lambda: cancelEntry(m2)))
+
+		# Place the widgets in the GUI.
+		newUserLbl.grid()
+		newUser.grid()
+		newPassLbl.grid()
+		newPass.grid()
+		newPassLbl2.grid()
+		newPass2.grid()
+		newUserEmailLbl.grid()
+		newUserEmail.grid()
+		createUserBtn.grid()
+		cancelBtn.grid()
+
+		m2.mainloop()
 	except Exception as e:
 		raise e
-	pass
+
+
+# Save the data to the server.
+# @param, newUser: the new user's username.
+# @param, newPass: the new user's password.
+# @param, newPass2: the new user's password. Should match its partner
+#	above. Used to confirm the password. 
+# @param, newUserEmail: the user's recovery email for their account.
+# @param, conn: the connection to the server.
+# @param, m2: a tkinter object of the new user creation window.
+# @return, returns nothing.
+def saveNewUser(newUser, newPass, newPass2, newUserEmail, conn, m2):
+	# If the contents of the entries are blank, give an error message
+	# and return.
+	entryList = [newUser, newPass, newPass2, newUserEmail]
+	if None in entryList or "" in entryList:
+		errStr = "Please fill out all entries before logging in."
+		messagebox.showerror("Error", errStr)
+		return
+
+	# If the passwords do not match, give an error message and return.
+	if newPass != newPass2:
+		errStr = "Please make sure your password matches."
+		messagebox.showerror("Error", errStr)
+		return
+
+	# Send the save command and info to the server.
+
+	# Destroy the window (Close it).
+	m2.destroy()
+
+
+# Closes the tkinter object passed in.
+# @param, m: a tkinter object of a window.
+# @return, returns nothing.
+def cancelEntry(m):
+	m.destroy()
 
 
 # User forgot their password. Redirect them to a window where they can
@@ -358,7 +441,49 @@ def forgotPassword(m, serverIP):
 	# their email into a form and have the program send a recovery
 	# email with their password. Otherwise, print Error messagebox and
 	# exit method.
-	pass
+	try:
+		# Try connecting to the server.
+		connection = None
+
+		# Once connected, load a GUI window for the user to enter their
+		# recovery password.
+		# Close the previous window.
+		m.destroy()
+		# New tkinter GUI object for the window.
+		m2 = Tk()
+		m2.geometry("300x400")
+
+		recEmailLbl = Label(m2, text="Recovery Email")
+		recEmail = Entry(m2)
+		recBtn = Button(m2, text="Send Recovery Email",
+						command=(lambda: sendRecoveryEmail(m2,
+													recEmail.get(),
+													connection)))
+
+		m2.mainloop()
+	except Exception as e:
+		raise e
+
+
+# Send the command to the server to send the recovery email to the
+# address specified.
+# @param, m2: a tkinter object of the recovery email window.
+# @param, recoveryEmail: the user's recovery email.
+# @param, conn: the connection to the server.
+# @return, returns nothing.
+def sendRecoveryEmail(m2, recoveryEmail, conn):
+	# If the contents of the entry are blank, give an error message
+	# and return.
+	if recoveryEmail == None or "" == recoveryEmail:
+		errStr = "Please fill out all entries before logging in."
+		messagebox.showerror("Error", errStr)
+		return
+
+	# Otherwise, send the command to the server to send the recovery
+	# email to the address specified.
+
+	# Destroy the window (Close it).
+	m2.destroy()
 
 
 # Load the first GUI's page.
@@ -380,7 +505,6 @@ def loadGUI(accntVals, investmentData):
 	console.pack(side="left")
 	consoleEntry.pack(side="left")
 
-	
 	m.mainloop()
 
 
