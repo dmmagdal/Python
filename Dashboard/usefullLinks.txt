@@ -1,4 +1,4 @@
-Download Ticker symbols from a market
+Download Ticker symbols from a market (list of all tickers per market)
 	http://www.eoddata.com/symbols.aspx
 	Must have log in (look at Aiden's account)
 	Has NASDAQ, NYSE, and CBOE (Chicago Board of Trade)

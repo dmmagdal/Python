@@ -76,21 +76,28 @@ def invalidCMD():
 
 
 # Creates a server with the socket module.
+# https://realpython.com/python-sockets/
 # @param, serveraddr: the server address, which contains the ip address
 #	and port number.
 # @return, returns nothing.
 def createSock(serveraddr):
 	# Create a server object out of a socket.
 	server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	# Bind server to the (address, port).
 	server.bind(serveraddr)
+	# Continuously listen for connections.
 	server.listen()
+	# Upopn connections, store the connection and incoming address in
+	# their respecitve variables.
 	conn, addr = server.accept()
 	with conn:
 		print("Connected by "+str(addr))
 		while True:
 			data = conn.recv(1024)
+			# Close the connection if no data was recieved.
 			if not data:
 				break
+			# Print the data recieved.
 			print(data.decode("utf-8"))
 			# Echo input from client.
 			#conn.sendall(data)
@@ -102,6 +109,8 @@ def createSock(serveraddr):
 
 
 # Create a server with the socketserver module.
+# https://stackoverflow.com/questions/10810249/python-socket-multiple-clients
+# https://docs.python.org/3/library/socketserver.html
 # @param, serveraddr: the server address, which contains the ip address
 #	and port number.
 # @return, returns nothing.
@@ -114,6 +123,7 @@ def createSockServer(serveraddr):
 
 
 # Create a server with the socket module (sentdex tutorial).
+# https://www.youtube.com/watch?v=CV7_stUWvBQ
 # @param, serveraddr: the server address, which contains the ip address
 #	and port number.
 # @return, returns nothing.
