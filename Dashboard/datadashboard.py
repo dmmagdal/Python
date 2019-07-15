@@ -198,6 +198,7 @@ def loadLogin():
 	m = Tk()
 	m.title("Dashboard LogIn")
 	m.geometry("300x400")
+	m.resizable(False, False)
 	logoImg = PhotoImage(file="dblogo.png")
 	logoLbl = Label(image=logoImg)
 	logoLbl.grid(column=1, row=0, columnspan=1, padx=25, pady=15)
@@ -351,6 +352,10 @@ def createNewUser(m, serverIP):
 		m2 = Tk()
 		m2.title("Create New Dashboard Account")
 		m2.geometry("300x400")
+		m2.resizable(False, False)
+		profileImg = PhotoImage(file="blankprofileicon.png")
+		profileLbl = Label(image=profileImg)
+		profileLbl.grid(column=1, row=0, columnspan=1, padx=25, pady=15)
 
 		# Labels for the entries.
 		newUserLbl = Label(m2, text="New Username")
@@ -376,16 +381,16 @@ def createNewUser(m, serverIP):
 							command=(lambda: cancelEntry(m2)))
 
 		# Place the widgets in the GUI.
-		newUserLbl.grid()
-		newUser.grid()
-		newPassLbl.grid()
-		newPass.grid()
-		newPassLbl2.grid()
-		newPass2.grid()
-		newUserEmailLbl.grid()
-		newUserEmail.grid()
-		createUserBtn.grid()
-		cancelBtn.grid()
+		newUserLbl.grid(column=1, row=1, padx=105)
+		newUser.grid(column=1, row=2)
+		newPassLbl.grid(column=1, row=3)
+		newPass.grid(column=1, row=4)
+		newPassLbl2.grid(column=1, row=5)
+		newPass2.grid(column=1, row=6)
+		newUserEmailLbl.grid(column=1, row=7)
+		newUserEmail.grid(column=1, row=8)
+		createUserBtn.grid(column=1, row=12, pady=15)
+		cancelBtn.grid(column=1, row=13)
 
 		m2.mainloop()
 	except Exception as e:
@@ -427,6 +432,7 @@ def saveNewUser(newUser, newPass, newPass2, newUserEmail, conn, m2):
 # @return, returns nothing.
 def cancelEntry(m):
 	m.destroy()
+	loadLogin()
 
 
 # User forgot their password. Redirect them to a window where they can

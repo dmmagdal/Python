@@ -31,7 +31,6 @@ def main():
 	#data = serverClient.recv(1024)
 	#print("Recieved "+str(repr(data)))
 	
-	
 
 
 if __name__ == '__main__':
