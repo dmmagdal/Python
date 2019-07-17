@@ -16,8 +16,9 @@ import sys
 import platform
 import csv
 import random
-import datetime
+#import datetime
 from bs4 import BeautifulSoup as bsoup
+from datetime import datetime
 
 
 # Variable that stores the host OS.
@@ -57,11 +58,11 @@ def main():
 	counter = 0
 
 	# Activate scraping.
-	while True:
+	while counter != 3:
 		# Initialize thread pools.
 		#thr1 = threading.Thread(target=getCBOE, args=(cboeTickers,))
 		#thr2 = threading.Thread(target=getNYSE, args=(nyseTickers,))
-		thr3 = threading.Thread(target=getNASDAQ, args=(nasdaqTickers))
+		thr3 = threading.Thread(target=getNASDAQ, args=(nasdaqTickers,))
 
 		# Start threads.
 		#thr1.start()
@@ -77,8 +78,8 @@ def main():
 		#pause = random.randint(0, 5)
 		#time.sleep(5)
 
-		sys.stdout.write("Scaped all markets "+str(counter))
-		sys.stdout.flush()
+		#sys.stdout.write("Scaped all markets "+str(counter))
+		#sys.stdout.flush()
 		#print("Scaped all markets "+str(counter))
 		counter += 1
 
@@ -193,13 +194,16 @@ def scrapeNASDAQHistoric(ticker):
 	nasdaqTickerLog = open(path+ticker+"_HistLogs.txt", 'r+')
 	# Load the log entries and the current time to variables.
 	logEntries = nasdaqTickerLog.readlines()
-	currentDate = datetime.datetime.now()
+	currentDate = datetime.now()
 	# Close the log file.
 	nasdaqTickerLog.close()
 	# If there are log entries and the most recent entry was done today
 	# then skip the scraping and return.
-	if len(logEntries) != 0 and logEntries[-1].strip("\n") - currentDate == 0:
-		return
+	if len(logEntries) != 0:
+		lastEntry = datetime.strptime(logEntries[-1].strip("\n"),
+											"%Y-%m-%d %H:%M:%S.%f")
+		if lastEntry - currentDate == 0:
+			return
 
 	# Otherwise, scrape the historic data for the ticker.
 	# Url for historic data.
@@ -210,7 +214,8 @@ def scrapeNASDAQHistoric(ticker):
 	# internet connection).
 	req1 = requests.get(nasdaqStr)
 	if req1.status_code != 200:
-		print("Exiting requestNASDAQ(). Bad request status_code.", flush=True)
+		print("Exiting requestNASDAQ(). Bad request status_code.",
+				flush=True)
 		return
 
 	# Load contents of request into bs4 and parse with html parser.
@@ -281,12 +286,13 @@ def scrapeNASDAQHistoric(ticker):
 			writeToCSV(fileTitle, "a", rows) 
 	else:
 		writeToCSV(fileTitle, "w", rows)
-	
 
 	# Now that we have the historic data saved to the csv, we need to
 	# log it. Open the log file from the beginning of this method in
-	# "a"ppend mode.
-	
+	# "a"ppend mode. Close the file once the write is done.
+	nasdaqTickerLog = open(path+ticker+"_HistLogs.txt", 'a+')
+	nasdaqTickerLog.write(str(currentDate)+"\n")
+	nasdaqTickerLog.close()
 
 
 # Load the data from the csv.

@@ -87,9 +87,9 @@ def createCBOETickerHistLogs(cboeTickers):
 def createNYSETickerHistLogs(nyseTickers):
 	path = None
 	if opSys == "Windows":
-		path = "Logs\\CBOE\\"
+		path = "Logs\\NYSE\\"
 	else:
-		path = "Logs/CBOE/"
+		path = "Logs/NYSE/"
 
 	for ticker in nyseTickers:
 		#subprocess.run("touch "+path+ticker+"_HistLogs.txt")
@@ -106,9 +106,9 @@ def createNYSETickerHistLogs(nyseTickers):
 def createNASDAQTickerHistLogs(nasdaqTickers):
 	path = None
 	if opSys == "Windows":
-		path = "Logs\\CBOE\\"
+		path = "Logs\\NASDAQ\\"
 	else:
-		path = "Logs/CBOE/"
+		path = "Logs/NASDAQ/"
 
 	for ticker in nasdaqTickers:
 		#subprocess.run("touch "+path+ticker+"_HistLogs.txt")
