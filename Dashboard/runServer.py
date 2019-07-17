@@ -8,15 +8,23 @@
 # Python 3.6
 # Linux
 
+
 import sys
 import os
-import subporocess
+import subprocess
+from subprocess import Popen
+
 
 def main():
 	# os.subprocess("python scraper.py")
 	# os.subprocess("python server.py")
-	subprocess.run("python scraper.py")
-	subprocess.run("python server.py")
+	#subprocess.run("python scraper.py")
+	#subprocess.run("python server.py")
+	commands = ["python scraper.py", "python server.py"]
+	processes = [Popen(cmd) for cmd in commands]
+	for process in processes:
+		process.wait()
+
 
 
 if __name__ == '__main__':

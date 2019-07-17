@@ -15,8 +15,6 @@ import os
 import sys
 import platform
 import csv
-import random
-#import datetime
 from bs4 import BeautifulSoup as bsoup
 from datetime import datetime
 
@@ -30,7 +28,9 @@ def main():
 	# Mac = Darwin
 	# Linux = Linux
 	opSys = platform.system()
-	print("OS: "+opSys)
+	print("OS: "+opSys, flush=True)
+
+	start = time.time()
 
 	# Open the list of tickers for each market.
 	cboefile = None
@@ -74,15 +74,15 @@ def main():
 		#thr2.join()
 		thr3.join()
 
-		# Pause for a random interval between 0 to 5 seconds
-		#pause = random.randint(0, 5)
-		#time.sleep(5)
-
-		#sys.stdout.write("Scaped all markets "+str(counter))
-		#sys.stdout.flush()
-		#print("Scaped all markets "+str(counter))
 		counter += 1
-
+	
+	end = time.time()
+	diff = end-start
+	hours = diff // 3600
+	minutes = diff // 60
+	seconds = diff - (hours * 3600) + (minutes * 60)
+	print("Program ran in "+str(hours)+" hours, "+str(minutes)+\
+			"minutes, and "+str(seconds)+" seconds.")
 
 
 # Extract the tickers from the txt file (first item when split by \t
@@ -133,7 +133,9 @@ def requestCBOE(ticker):
 
 	# First, scrape and extract historical data.
 	scrapeCBOEHistoric(ticker)
-	pass
+
+	# Next, scrape the current price for the ticker.
+	getCurrentCBOEPrice(ticker)
 
 
 # Send a request to NYSE and parse the data to the appropriate file.
@@ -148,6 +150,7 @@ def requestNYSE(ticker):
 	scrapeNYSEHistoric(ticker)
 	
 	# Next, scrape the current price for the ticker.
+	getCurrentNYSEPrice(ticker)
 
 
 # Send a request to NASDAQ and parse the data to the appropriate file.
@@ -160,7 +163,9 @@ def requestNASDAQ(ticker):
 
 	# First, scrape and extract historical data.
 	scrapeNASDAQHistoric(ticker)
-	pass
+
+	# Next, scrape the current price for the ticker.
+	getCurrentNASDAQPrice(ticker)
 
 
 # Scrape the historic data from CBOE given a ticker.
@@ -191,7 +196,12 @@ def scrapeNASDAQHistoric(ticker):
 		path = "Logs\\NASDAQ\\"
 	else:
 		path = "Logs/NASDAQ/"
-	nasdaqTickerLog = open(path+ticker+"_HistLogs.txt", 'r+')
+	logFilePath = path+ticker.upper()+"_HistLogs.txt"
+	# If the log file doesn't already exist, create it.
+	if not os.path.exists(logFilePath):
+		newLog = open(logFilePath, 'w+')
+		newLog.close()
+	nasdaqTickerLog = open(logFilePath, 'r')
 	# Load the log entries and the current time to variables.
 	logEntries = nasdaqTickerLog.readlines()
 	currentDate = datetime.now()
@@ -202,7 +212,8 @@ def scrapeNASDAQHistoric(ticker):
 	if len(logEntries) != 0:
 		lastEntry = datetime.strptime(logEntries[-1].strip("\n"),
 											"%Y-%m-%d %H:%M:%S.%f")
-		if lastEntry - currentDate == 0:
+		difference = currentDate - lastEntry
+		if difference.days <= 0:
 			return
 
 	# Otherwise, scrape the historic data for the ticker.
@@ -216,6 +227,7 @@ def scrapeNASDAQHistoric(ticker):
 	if req1.status_code != 200:
 		print("Exiting requestNASDAQ(). Bad request status_code.",
 				flush=True)
+		print("status_code: "+str(req1.status_code))
 		return
 
 	# Load contents of request into bs4 and parse with html parser.
@@ -290,7 +302,7 @@ def scrapeNASDAQHistoric(ticker):
 	# Now that we have the historic data saved to the csv, we need to
 	# log it. Open the log file from the beginning of this method in
 	# "a"ppend mode. Close the file once the write is done.
-	nasdaqTickerLog = open(path+ticker+"_HistLogs.txt", 'a+')
+	nasdaqTickerLog = open(path+ticker.upper()+"_HistLogs.txt", 'a+')
 	nasdaqTickerLog.write(str(currentDate)+"\n")
 	nasdaqTickerLog.close()
 
@@ -327,7 +339,7 @@ def readFromCSV(fileTitle):
 # @param, writeMode: the string that determines how to write to the
 # 	file. Options are either "w", "r", "a" but should only include the
 #	first and last one ("w"rite and "a"ppend). 
-# @oaram, rows: the data that has to be written to the file.
+# @param, rows: the data that has to be written to the file.
 # @return, returns nothing.
 def writeToCSV(fileTitle, writeMode, rows):
 	# Open the file.
@@ -349,6 +361,34 @@ def writeToCSV(fileTitle, writeMode, rows):
 
 	# Close file.
 	file.close()
+
+
+# Retrieve the current price for the ticker from the market and store
+# it.
+# @param: ticker, the string that is the ticker symbol for the company
+#	in that market.
+# @return: returns nothing.
+def getCurrentCBOEPrice(ticker):
+	pass
+
+
+# Retrieve the current price for the ticker from the market and store
+# it.
+# @param: ticker, the string that is the ticker symbol for the company
+#	in that market.
+# @return: returns nothing.
+def getCurrentNYSEPrice(ticker):
+	pass
+
+
+# Retrieve the current price for the ticker from the market and store
+# it.
+# @param: ticker, the string that is the ticker symbol for the company
+#	in that market.
+# @return: returns nothing.
+def getCurrentNASDAQPrice(ticker):
+	pass
+
 
 
 if __name__ == '__main__':
