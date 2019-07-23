@@ -6,6 +6,7 @@
 
 
 import platform
+import os
 from scraper import getTickers
 
 
@@ -51,9 +52,27 @@ def validUser(user):
 		path = "Users\\"
 	else:
 		path = "Users/"
-	userFilePath = path+"usersList.txt"
-	userFile = open(userFilePath, 'r')
-	users = userFile.readlines()
+	# userFilePath = path+"usersList.txt"
+	# userFile = open(userFilePath, 'r')
+	# users = userFile.readlines()
+	users = [folder for folder in os.listdir(path)
+			if os.path.isdir(path+folder)]
 	if user in users:
 		return (True, user)
 	return (False, '')
+
+
+# Create # @param: user,
+# @param: user, a tuple containing the user's credentials. The user
+#	string encrypted is in the following format:
+#	user[+admin]+email+password.
+# @param: key, the key used for the encryption function.
+# @return: returns a tuple with a boolean and the user's id hash.
+def createUser(user, key):
+	# Encode the user string.
+	userBytes = user.encode()
+	# Create an encryption function based on the key.
+	encryptFunc = Fernet(key)
+	# Encrypt the byte data given the encryption function.
+	encryptedUser = encryptFunc.encrypt(userBytes)
+	# Create a 
