@@ -4,6 +4,8 @@
 # given a ticker symbol and parse the data from the page.
 # Needs to be able to get 52hi, 52lo, op, cl, current price, volume
 # traded, previous closing.
+# Python 3.6
+# Linux
 
 
 import requests

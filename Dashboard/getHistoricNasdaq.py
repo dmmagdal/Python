@@ -3,6 +3,7 @@
 # Python program to access historical stock data. Only gets the last 30
 # days so far by default.
 # Python 3.6
+# Linux
 
 import os
 import sys
