@@ -280,18 +280,41 @@ def userSetup(opSys, setting):
 	if setting = "clean" or not keyExists(opSys, userDir):
 		# Generate a new encryption key for all accounts.
 		key = Fernet.generate_key()
+		# Save the key too. The file dek.key stands for decryption and 
+		# encryption key.
+		keyFile = open(userDir+slash+"dek.key", 'wb+')
+		keyFile.write(key)
+		keyFile.close()
 	else:
 		# Find and open the dek to retrieve the encryption key.
 		keyFile = open(userDir+slash+"dek.key", 'rb')
 		key = keyFile.read()
 		keyFile.close()
+	# Check that the user string doesn't already exist. If it does,
+	# recursively call the function until there is success.
+	if existingUser(adminUserString, key, opSys, userDir):
+		print("Error: A user with that hash or email already exists.")
+		userSetup(opSys, setting)
+		return
 	# Encode the user string.
 	adminUserBytes = adminUserString.encode()
 	# Create an encryption function based on the key.
 	encryptFunc = Fernet(key)
-	# Encrypt the byte data given the encryption function.
-	encryptedUser = encryptFunc.encrypt(adminUserBytes)
-	# Create a 
+	# Encrypt the byte data of the encoded user string. Then decode it
+	# so that result is a string and not bytes. This is our hashed user
+	# string.
+	encryptedUser = encryptFunc.encrypt(adminUserBytes).decode()
+	# Given that this is now our user string and each user has data
+	# associated to them, their profiles are now represented as folders
+	# containing files that detail things such as their investment logs
+	# and other data.
+	os.path.mkdir(userDir+slash+encryptedUser)
+	userLog = open(userDir+slash+encryptedUser+slash+"investmentLogs.txt", "w+")
+	userLog.close()
+	# Send a welcome email to the new user.
+	sendWelcomeEmail(adminUserString)
+	return
+	
 
 
 # This recursive function takes the path of a folder and cleans out its
@@ -320,6 +343,7 @@ def cleanDir(opSys, path):
 			cleanDir(opSys, path+slash+obj)
 			os.remove(path+slash+obj)
 
+
 # Check to see if the dek (key) file for users exists. Doesn't require
 # any (admin) profiles to exist.
 # @param: opSys, the string detailing the host OS.
@@ -343,14 +367,79 @@ def adminExist(opSys, path):
 	slash = "/"
 	if opSys == "Windows":
 		slash = "\\"
-	# Get the dek.
+	# Get the dek and initialize the encryption/decryption function.
 	keyFile = open("dek.key", "rb")
-	lines = keyFile.readlines()
+	key = keyFile.read()
 	keyFile.close()
+	function = Fernet(key)
 	# Get the names of all subdirectories in "./Users".
-	users = [fold for fold in os.listdir(path) if os.path.isdir(path+slash+fold)]
-	# Decrypt all userstring keys
+	users = [folder for folder in os.listdir(path)
+			if os.path.isdir(path+slash+folder)]
+	# Decrypt all user strings.
+	for user in users:
+		userString = function.decrypt(user.encode()).decode()
+		# If the term "admin" appears in the second term but the @ does
+		# does not (indicating that the term is just "admin" and not an
+		# email), return True.
+		index = userString.split(" ")[1]
+		if "admin" in index and "@" not in index:
+			return True
+	# Otherwise, there are no admin accounts. Return False.
+	return False
 
+
+# Check to see if a user with the same email or hash already exists.
+# @param: userString, the string containing the user's credentials.
+# @param: key, the key used for the encryption/decryption function.
+# @param: opSys, the string detailing the host OS.
+# @param: path, the string containing the path of the Users directory.
+# @return: returns a boolean on whether the userstring has the same
+#	email or encryption hash as an existing user.
+def existingUser(userString, key, opSys, path):
+	# Format slashes.
+	slash = "/"
+	if opSys == "Windows":
+		slash = "\\"
+	# Get the encryption/decryption function based on the key.
+	function = Fernet(key)
+	encryptedUser = function.encrypt(userString.encode()).decode()
+	# Get the names of all subdirectories in "./Users".
+	users = [folder for folder in os.listdir(path)
+			if os.path.isdir(path+slash+folder)]
+	# Decrypt all user strings.
+	for user in users:
+		# If the raw hashes are a match, return true.
+		if encryptedUser == user:
+			return True
+		# Otherwise, if the email in the decrypted user strings match,
+		# the return true.
+		otherUserString = function.decrypt(user.encode()).decode()
+		otherUserEmail = getEmail(otherUserString)
+		userEmail = getEmail(userString)
+		if otherUserEmail == userEmail:
+			return True
+	return False
+
+
+# Extract the email from the user string. Return the email string.
+# @param, userString, the string containing the user's credentials.
+# @return: returns a string with the email.
+def getEmail(userString):
+	# Split up the user string in its individual credentials.
+	credentials = userString.split(" ")
+	for index in credentials:
+		# The email is identified by the @ sign.
+		if "@" in index:
+			return index
+
+
+# Send the new user a welcome email. Throw an exception if there's an
+# issue.
+# @param: userString, 
+# @return: returns nothing.
+def sendWelcomeEmail(userString):
+	
+	pass
 
 	# Check to see if the following log files are created yet. If not,
 	# then initialize them to be blank.
