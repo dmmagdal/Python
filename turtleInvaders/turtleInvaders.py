@@ -6,11 +6,14 @@
 # Python 3.6
 # Windows 10
 
+
 import sys
 import turtle
 import random
 import math
 import time
+from threading import Thread
+
 
 class Ship:
 	# xcoord = 0
