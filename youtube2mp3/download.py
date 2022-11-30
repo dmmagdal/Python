@@ -51,9 +51,14 @@ def main():
 	# Iterate through each video.
 	seen = set()
 	for playlist in indexed_data["playlist"]:
+		# For testing, only do 1 playlist (this one has about 12 songs). Can
+		# Use this as an estimate on the storage needs.
+		if playlist != "LoFi Hip-Hop Music":
+			continue
+
 		videos = indexed_data["playlist"][playlist]
 		for video in videos:
-			song_url = video["song_url"]
+			song_url = video["url"]
 			if song_url not in seen:
 				seen.add(song_url)
 				download_status = download_video(song_url, save_video_path)
