@@ -1,0 +1,3 @@
+moviepy
+pydub
+pytube==12.1.0
