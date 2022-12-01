@@ -205,7 +205,7 @@ def convert2wav(mp3_audio_path, wav_save_path=None):
 	if mp3_audio_path != None:
 		output_path = wav_save_path
 	else:
-		output_path = mp3_audio_path.replace(".mp3", "wav")
+		output_path = mp3_audio_path.replace(".mp3", ".wav")
 
 	try:
 		sound = AudioSegment.from_mp3(mp3_audio_path)
