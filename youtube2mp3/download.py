@@ -6,8 +6,8 @@
 
 import os
 import json
-# from moviepy.editor import *
-# from pydub import AudioSegment
+from moviepy.editor import *
+from pydub import AudioSegment
 from pytube import YouTube, Channel, Playlist
 
 
@@ -59,12 +59,14 @@ def main():
 		videos = indexed_data["playlist"][playlist]
 		for video in videos:
 			song_url = video["url"]
+			song_name = video["song"]
 			if song_url not in seen:
 				seen.add(song_url)
 				download_status = download_video(song_url, save_video_path)
-				# if download_status:
-				# 	convert2mp3(save_mp3_path)
-				# 	convert2wav(save_wav_path)
+				if download_status:
+					full_path = os.path.join(save_video_path, song_name + ".mp4")
+					convert2mp3(full_path)
+					convert2wav(full_path.replace(".mp4", ".mp3"))
 
 	# Exit the program.
 	exit(0)
@@ -165,6 +167,11 @@ def download_video(video_url, save_path):
 	@return: returns nothing.
 '''
 def convert2mp3(mp4_video_path, mp3_save_path=None):
+	# Verify the source file exists.
+	if not os.path.exists(mp4_video_path):
+		print(f"Target mp4 file {mp4_video_path} does not exist")
+		return
+
 	# If the destination mp3 path not defined, use the same path as the input
 	# mp4 file.
 	if mp3_save_path != None:
@@ -172,8 +179,11 @@ def convert2mp3(mp4_video_path, mp3_save_path=None):
 	else:
 		output_path = mp4_video_path.replace(".mp4", ".mp3")
 
-	video = VideoFileClip(mp4_video_path)
-	video.audio.write_audiofile(output_path)
+	try:
+		video = VideoFileClip(mp4_video_path)
+		video.audio.write_audiofile(output_path)
+	except:
+		print(f"Failed to convert {mp4_video_path} to mp3")
 	
 
 '''
@@ -185,6 +195,11 @@ def convert2mp3(mp4_video_path, mp3_save_path=None):
 	@return: returns nothing.
 '''
 def convert2wav(mp3_audio_path, wav_save_path=None):
+	# Verify the source file exists.
+	if not os.path.exists(mp3_audio_path):
+		print(f"Target mp3 file {mp3_audio_path} does not exist")
+		return
+
 	# If the destination wav path not defined, use the same path as the input
 	# mp3 file.
 	if mp3_audio_path != None:
@@ -192,8 +207,11 @@ def convert2wav(mp3_audio_path, wav_save_path=None):
 	else:
 		output_path = mp3_audio_path.replace(".mp3", "wav")
 
-	sound = AudioSegment.from_mp3(mp3_audio_path)
-	sound.export(output_path, format="wav")
+	try:
+		sound = AudioSegment.from_mp3(mp3_audio_path)
+		sound.export(output_path, format="wav")
+	except:
+		print(f"Failed to convert {mp3_audio_path} to wav")
 
 
 if __name__ == '__main__':

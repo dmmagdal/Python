@@ -25,11 +25,17 @@ The docker container is going to run `download.py`. `download.py` is a script th
 ### TODO
 
 This program can be made a lot more extensible to allow for user input in the arguments other than relying on the hardcoded contents in `download.py` as well as some general file checking.
+ - [] find a lighter Docker image to use.
  - [] provide arguments for rough index json (ie `ChillMusicLab.json`) so that users can enter their own files.
  - [] provide arguments for fine index json (ie `ChillMusicLab_Explored.json`) so that users can enter their own files.
  - [] provide arguments for audio exporting (mp3, wav, both, or neither).
  - [] provide arguments for saving mp4 video if audio export arguments are defined as anything other than "neither".
  - [] add more error checking/handling for files.
+
+
+### Notes
+
+ - It takes about 5 minutes and 2.4GB to download 9/12 tracks from the "LoFi Hip-Hop Music" playlist. This is just downloading the mp4 file (does not include converting to mp3 & wav).
 
 
 ### Resources
